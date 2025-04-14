@@ -177,7 +177,7 @@ const Menu = () => {
                       }`}
                       disabled={isItemInCart(item._id || item.id)}
                     >
-                      {isItemInCart(item._id || item.id) ? 'Added' : 'Add to Cart'}
+                      {isItemInCart(item._id || item.id) ? 'Ordered' : 'Order'}
                     </button>
                   </div>
                 </div>
@@ -256,7 +256,7 @@ const Menu = () => {
                           }`}
                           disabled={isItemInCart(item._id || item.id)}
                         >
-                          {isItemInCart(item._id || item.id) ? 'Added' : 'Add to Cart'}
+                          {isItemInCart(item._id || item.id) ? 'Ordered' : 'Order'}
                         </button>
                       </div>
                     </div>

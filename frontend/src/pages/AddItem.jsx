@@ -278,7 +278,7 @@ const Additem = () => {
 
                         {item.allergens && (
                           <p className="text-gray-500 text-xs mb-3">
-                            <span className="font-medium">Allergens:</span> {item.allergens}
+                            <span className="font-medium">SideDish:</span> {item.allergens}
                           </p>
                         )}
 

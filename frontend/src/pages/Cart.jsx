@@ -84,7 +84,7 @@ const Cart = () => {
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Your Cart</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Your Ordered Items</h2>
         <span className="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">
           {totalItems} {totalItems === 1 ? 'item' : 'items'}
         </span>
@@ -97,13 +97,13 @@ const Cart = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
             </svg>
           </div>
-          <p className="text-lg text-gray-600">Your cart is empty</p>
+          <p className="text-lg text-gray-600">You have no orders right now</p>
           <p className="text-gray-500 mt-1">Add some delicious items to get started!</p>
           <button
             onClick={() => navigate('/')}
             className="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
-            Browse Products
+            Look into our Menu!!
           </button>
         </div>
       ) : (
@@ -218,14 +218,14 @@ const Cart = () => {
               onClick={() => navigate('/')}
               className="w-full md:w-1/3 bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
             >
-              Continue Shopping
+              Continue Ordering
             </button>
 
             <button
               onClick={handlePlaceOrder}
               className="w-full md:w-2/3 bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
             >
-              Proceed to Checkout
+              Proceed to Payment
             </button>
           </div>
 

@@ -13,6 +13,7 @@ import Contact from './pages/Contact';
 import AddItem from './pages/AddItem';
 import Cart from './pages/Cart';
 import AdminLogin from './pages/AdminLogin';
+import OpenMapsToHotel from './pages/OpenMapsToHotel';
 
 const App = () => {
   return (
@@ -25,7 +26,8 @@ const App = () => {
             <Route path="/menu" element={<Menu />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<AddItem />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/OpenMapsToHotel" element={<OpenMapsToHotel />} />
           </Route>
 
           {/* Admin Login Route */}

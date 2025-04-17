@@ -17,18 +17,14 @@ const foodItemSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   preparationTime: {
-    type: Number,
-    required: true,
-    min: 1
+    type: String, // Changed to String to match the format "15-20 mins"
+    required: true
   },
   description: {
-    type: String,
-    default: ''
-  },
-  allergens: {
     type: String,
     default: ''
   },
@@ -43,6 +39,21 @@ const foodItemSchema = new mongoose.Schema({
   isPopular: {
     type: Boolean,
     default: false
+  },
+  accompaniments: { // Added field
+    type: String,
+    default: ''
+  },
+  totalSold: { // Added field
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  quantity: { // Added field
+    type: Number,
+    required: true,
+    min: 0,
+    default: 0
   }
 }, { timestamps: true });
 

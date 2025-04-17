@@ -8,6 +8,7 @@ const Menu = () => {
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [quantitySelections, setQuantitySelections] = useState({});
   const { addToCart, cartItems } = useCart();
 
   useEffect(() => {
@@ -19,6 +20,13 @@ const Menu = () => {
       setLoading(true);
       const res = await axios.get('http://localhost:5000/api/food-items');
       setFoodItems(res.data);
+
+      // Initialize quantity selections for each item to 1
+      const initialQuantities = {};
+      res.data.forEach(item => {
+        initialQuantities[item._id || item.id] = 1;
+      });
+      setQuantitySelections(initialQuantities);
 
       // Set the first category as active by default
       if (res.data.length > 0) {
@@ -59,6 +67,24 @@ const Menu = () => {
     return cartItems.some(item => item._id === itemId || item.id === itemId);
   };
 
+  // Handle quantity changes
+  const handleQuantityChange = (itemId, change) => {
+    setQuantitySelections(prev => {
+      const currentQuantity = prev[itemId] || 1;
+      const newQuantity = Math.max(1, currentQuantity + change); // Ensure quantity doesn't go below 1
+      return { ...prev, [itemId]: newQuantity };
+    });
+  };
+
+  // Add to cart with quantity
+  const handleAddToCart = (item) => {
+    const itemWithQuantity = {
+      ...item,
+      quantity: quantitySelections[item._id || item.id] || 1
+    };
+    addToCart(itemWithQuantity);
+  };
+
   // Handle category selection
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
@@ -70,6 +96,15 @@ const Menu = () => {
 
   // Get all unique categories
   const categories = Object.keys(groupedByCategory);
+
+  // Today's sales data - in a real app, this would come from your backend
+  const todaySales = [
+    { name: "Masala Dosa with Sambar & Coconut Chutney", quantity: 87 },
+    { name: "Idli with Sambar & Tomato Chutney", quantity: 63 },
+    { name: "Vada with Mint Chutney", quantity: 45 },
+    { name: "Pongal with Coconut Chutney", quantity: 38 },
+    { name: "Mysore Bonda with Ginger Chutney", quantity: 29 }
+  ];
 
   if (loading) {
     return (
@@ -135,6 +170,33 @@ const Menu = () => {
           </div>
         </div>
 
+        {/* Today's Sale Data */}
+        <div className="mb-10 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+          <h2 className="text-2xl font-bold text-yellow-800 mb-4">Today's Top Selling Items</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {todaySales.map((item, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-sm p-4 border border-yellow-100">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-medium text-gray-800">{item.name}</h3>
+                    <div className="flex items-center mt-2">
+                      <span className="text-yellow-600 text-xs font-medium mr-1">Sold today:</span>
+                      <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded">
+                        {item.quantity} orders
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-yellow-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Today's Special */}
         <div className="mb-10 bg-red-50 border border-red-100 rounded-lg p-6">
           <h2 className="text-2xl font-bold text-red-800 mb-4">Today's Special</h2>
@@ -167,18 +229,35 @@ const Menu = () => {
                     <p className="text-gray-600 mb-4 text-sm flex-grow">{item.description}</p>
                   )}
                   <div className="flex justify-between items-center mt-auto">
-                    <span className="text-sm text-gray-500">Prep Time: {item.preparationTime} min</span>
-                    <button
-                      onClick={() => addToCart(item)}
-                      className={`px-4 py-2 rounded text-sm font-medium transition ${
-                        isItemInCart(item._id || item.id)
-                          ? 'bg-gray-300 text-gray-700'
-                          : 'bg-red-600 text-white hover:bg-red-700'
-                      }`}
-                      disabled={isItemInCart(item._id || item.id)}
-                    >
-                      {isItemInCart(item._id || item.id) ? 'Added' : 'Add to Cart'}
-                    </button>
+                    <span className="text-sm text-gray-500">Prep Time: {item.preparationTime || "15-20 min"}</span>
+                    <div className="flex items-center">
+                      <div className="mr-2 flex items-center border border-gray-300 rounded">
+                        <button 
+                          onClick={() => handleQuantityChange(item._id || item.id, -1)}
+                          className="px-2 py-1 text-gray-600 hover:bg-gray-100"
+                        >
+                          -
+                        </button>
+                        <span className="px-2 py-1">{quantitySelections[item._id || item.id] || 1}</span>
+                        <button 
+                          onClick={() => handleQuantityChange(item._id || item.id, 1)}
+                          className="px-2 py-1 text-gray-600 hover:bg-gray-100"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => handleAddToCart(item)}
+                        className={`px-4 py-2 rounded text-sm font-medium transition ${
+                          isItemInCart(item._id || item.id)
+                            ? 'bg-gray-300 text-gray-700'
+                            : 'bg-red-600 text-white hover:bg-red-700'
+                        }`}
+                        disabled={isItemInCart(item._id || item.id)}
+                      >
+                        {isItemInCart(item._id || item.id) ? 'Added' : 'Add to Cart'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -209,59 +288,90 @@ const Menu = () => {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredItems[category].map((item) => (
-                  <div
-                    key={item._id || item.id}
-                    className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 flex flex-col"
-                  >
-                    <div className="h-48 bg-gray-100">
-                      <img
-                        src={item.image || "https://via.placeholder.com/400x320?text=Delicious+Food"}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "https://via.placeholder.com/400x320?text=Delicious+Food";
-                        }}
-                      />
-                    </div>
-
-                    <div className="p-5 flex-grow flex flex-col">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-xl font-bold text-gray-800">{item.name}</h3>
-                        <span className="font-bold text-red-600 text-lg">₹{item.price}</span>
+                {filteredItems[category].map((item) => {
+                  // Enhance item names with accompaniments
+                  const enhancedName = item.category === "Dosa" 
+                    ? `${item.name} with Sambar & Coconut Chutney`
+                    : item.category === "Idli" 
+                    ? `${item.name} with Sambar & Tomato Chutney`
+                    : item.category === "Vada"
+                    ? `${item.name} with Mint Chutney`
+                    : item.name;
+                    
+                  return (
+                    <div
+                      key={item._id || item.id}
+                      className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 flex flex-col"
+                    >
+                      <div className="h-48 bg-gray-100">
+                        <img
+                          src={item.image || "https://via.placeholder.com/400x320?text=Delicious+Food"}
+                          alt={enhancedName}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://via.placeholder.com/400x320?text=Delicious+Food";
+                          }}
+                        />
                       </div>
 
-                      {item.description && (
-                        <p className="text-gray-600 mb-4 text-sm flex-grow">{item.description}</p>
-                      )}
+                      <div className="p-5 flex-grow flex flex-col">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-xl font-bold text-gray-800">{enhancedName}</h3>
+                          <span className="font-bold text-red-600 text-lg">₹{item.price}</span>
+                        </div>
 
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {item.isVegetarian && (
-                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Vegetarian</span>
+                        {item.description && (
+                          <p className="text-gray-600 mb-4 text-sm flex-grow">{item.description}</p>
                         )}
-                        {item.isSpicy && (
-                          <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Spicy</span>
-                        )}
-                      </div>
 
-                      <div className="flex justify-between items-center mt-auto">
-                        <span className="text-sm text-gray-500">Prep Time: {item.preparationTime} min</span>
-                        <button
-                          onClick={() => addToCart(item)}
-                          className={`px-4 py-2 rounded text-sm font-medium transition ${
-                            isItemInCart(item._id || item.id)
-                              ? 'bg-gray-300 text-gray-700'
-                              : 'bg-red-600 text-white hover:bg-red-700'
-                          }`}
-                          disabled={isItemInCart(item._id || item.id)}
-                        >
-                          {isItemInCart(item._id || item.id) ? 'Added' : 'Add to Cart'}
-                        </button>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {item.isVegetarian && (
+                            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Vegetarian</span>
+                          )}
+                          {item.isSpicy && (
+                            <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Spicy</span>
+                          )}
+                          {item.accompaniments && (
+                            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Includes {item.accompaniments}</span>
+                          )}
+                        </div>
+
+                        <div className="flex justify-between items-center mt-auto">
+                          <span className="text-sm text-gray-500">Prep Time: {item.preparationTime || "15-20 min"}</span>
+                          <div className="flex items-center">
+                            <div className="mr-2 flex items-center border border-gray-300 rounded">
+                              <button 
+                                onClick={() => handleQuantityChange(item._id || item.id, -1)}
+                                className="px-2 py-1 text-gray-600 hover:bg-gray-100"
+                              >
+                                -
+                              </button>
+                              <span className="px-2 py-1">{quantitySelections[item._id || item.id] || 1}</span>
+                              <button 
+                                onClick={() => handleQuantityChange(item._id || item.id, 1)}
+                                className="px-2 py-1 text-gray-600 hover:bg-gray-100"
+                              >
+                                +
+                              </button>
+                            </div>
+                            <button
+                              onClick={() => handleAddToCart(item)}
+                              className={`px-4 py-2 rounded text-sm font-medium transition ${
+                                isItemInCart(item._id || item.id)
+                                  ? 'bg-gray-300 text-gray-700'
+                                  : 'bg-red-600 text-white hover:bg-red-700'
+                              }`}
+                              disabled={isItemInCart(item._id || item.id)}
+                            >
+                              {isItemInCart(item._id || item.id) ? 'Added' : 'Add to Cart'}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))
@@ -283,7 +393,6 @@ const Menu = () => {
             <span className="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded flex items-center justify-center">Nut-Free</span>
           </div>
         </div>
-
 
         {/* Footer */}
         <div className="mt-10 text-center text-sm text-gray-500">

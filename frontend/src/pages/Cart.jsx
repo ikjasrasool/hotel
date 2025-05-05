@@ -37,7 +37,7 @@ const Cart = () => {
     }
   };
 
-  // Handle quantity increase
+  // Handle quantity increase with validation
   const increaseQuantity = (item) => {
     updateCartItemQuantity(item._id, item.quantity + 1);
   };
@@ -118,79 +118,88 @@ const Cart = () => {
             </div>
           </div>
 
-          <div className="space-y-4 mb-6">
+          <div className="space-y-6 mb-8">
             {cartItems.map((item) => (
-              <div key={item._id} className="grid grid-cols-12 items-center py-4 border-b border-gray-100">
+              <div key={item._id} className="grid grid-cols-12 items-center py-6 px-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
                 <div className="col-span-1">
                   {item.imageUrl ? (
                     <img
                       src={item.imageUrl}
                       alt={item.name}
-                      className="w-16 h-16 object-cover rounded"
+                      className="w-20 h-20 object-cover rounded-lg shadow-sm"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "/api/placeholder/80/80"; // Fallback to placeholder
+                        e.target.src = "/api/placeholder/80/80";
                       }}
                     />
                   ) : (
-                    <img
-                      src="/api/placeholder/80/80"
-                      alt={item.name}
-                      className="w-16 h-16 object-cover rounded bg-gray-100"
-                    />
+                    <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
                   )}
                 </div>
 
-                <div className="col-span-5">
-                  <h3 className="font-medium text-gray-800">{item.name}</h3>
+                <div className="col-span-5 ml-4">
+                  <h3 className="font-semibold text-gray-800 text-lg">{item.name}</h3>
                   {item.customization && (
-                    <p className="text-xs text-gray-500 mt-1">{item.customization}</p>
+                    <p className="text-sm text-gray-600 mt-1">{item.customization}</p>
                   )}
                   {item.description && (
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{item.description}</p>
+                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{item.description}</p>
                   )}
                 </div>
 
-                <div className="col-span-2 flex justify-center items-center space-x-2">
-                  <button
-                    className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center hover:bg-gray-300"
-                    onClick={() => decreaseQuantity(item)}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4"></path>
-                    </svg>
-                  </button>
+                <div className="col-span-2 flex justify-center items-center">
+                  <div className="flex items-center space-x-2 bg-gray-50 rounded-lg p-1">
+                    <button
+                      className={`w-8 h-8 rounded-md flex items-center justify-center transition-colors ${
+                        item.quantity > 1 ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-red-500 text-white hover:bg-red-600'
+                      }`}
+                      onClick={() => decreaseQuantity(item)}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
+                      </svg>
+                    </button>
 
-                  <span className="bg-gray-100 px-3 py-1 rounded text-center min-w-[40px]">
-                    {item.quantity}
-                  </span>
+                    <span className="bg-white px-4 py-2 rounded-md text-center min-w-[48px] font-medium">
+                      {item.quantity}
+                    </span>
 
-                  <button
-                    className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center hover:bg-gray-300"
-                    onClick={() => increaseQuantity(item)}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                  </button>
+                    <button
+                      className={`w-8 h-8 rounded-md flex items-center justify-center bg-green-500 text-white transition-colors ${
+                        item.quantity < 10 ? 'hover:bg-green-600' : 'opacity-50 cursor-not-allowed'
+                      }`}
+                      onClick={() => increaseQuantity(item)}
+                      disabled={item.quantity >= 10}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
-                <div className="col-span-2 text-right font-medium">
-                  ₹{item.price.toFixed(2)}
+                <div className="col-span-2 text-right">
+                  <p className="font-medium text-gray-800">₹{item.price.toFixed(2)}</p>
+                  <p className="text-sm text-gray-500">per item</p>
                 </div>
 
-                <div className="col-span-1 text-right font-medium">
-                  ₹{(item.price * item.quantity).toFixed(2)}
+                <div className="col-span-1 text-right">
+                  <p className="font-semibold text-green-600">₹{(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="text-xs text-gray-500">subtotal</p>
                 </div>
 
                 <div className="col-span-1 flex justify-end">
                   <button
-                    className="text-red-500 hover:text-red-700"
+                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
                     onClick={() => removeFromCart(item._id)}
                     aria-label="Remove item"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </button>
                 </div>
@@ -198,18 +207,20 @@ const Cart = () => {
             ))}
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="flex justify-between mb-2">
-              <span className="text-gray-600">Subtotal</span>
-              <span className="font-medium">₹{totalAmount.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between mb-2">
-              <span className="text-gray-600">Taxes (5%)</span>
-              <span className="font-medium">₹{taxAmount.toFixed(2)}</span>
-            </div>
-            <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between">
-              <span className="font-bold text-gray-800">Total</span>
-              <span className="font-bold text-gray-800">₹{finalAmount.toFixed(2)}</span>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="space-y-3">
+              <div className="flex justify-between text-gray-600">
+                <span>Subtotal ({totalItems} items)</span>
+                <span className="font-medium">₹{totalAmount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Taxes (5%)</span>
+                <span className="font-medium">₹{taxAmount.toFixed(2)}</span>
+              </div>
+              <div className="border-t border-gray-200 mt-4 pt-4 flex justify-between">
+                <span className="text-lg font-bold text-gray-800">Total Amount</span>
+                <span className="text-lg font-bold text-green-600">₹{finalAmount.toFixed(2)}</span>
+              </div>
             </div>
           </div>
 

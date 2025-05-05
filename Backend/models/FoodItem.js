@@ -20,16 +20,16 @@ const foodItemSchema = new mongoose.Schema({
     required: true
   },
   preparationTime: {
-    type: String, // Changed from Number to String
+    type: String,
     required: true
   },
   description: {
     type: String,
     default: ''
   },
-  includes: { // Changed from allergens to includes
+  includes: {
     type: String,
-    default: 'Sambar and Chutney' // Default value
+    default: 'Sambar and Chutney'
   },
   isVegetarian: {
     type: Boolean,
@@ -43,12 +43,25 @@ const foodItemSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  quantity: { // New field
+  quantity: {
     type: Number,
     required: true,
     min: 1
+  },
+  ingredients: {
+    type: [String],
+    default: []
+  },
+  nutritionalInfo: {
+    calories: { type: Number },
+    protein: { type: Number },
+    carbohydrates: { type: Number },
+    fat: { type: Number }
+  },
+  availableTime: {
+    start: { type: String },
+    end: { type: String }
   }
 }, { timestamps: true });
 
 module.exports = mongoose.model('FoodItem', foodItemSchema);
-

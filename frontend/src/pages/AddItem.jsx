@@ -16,10 +16,22 @@ const Additem = () => {
     category: '',
     preparationTime: '',
     description: '',
+    includes: 'Sambar and Chutney',
     isVegetarian: false,
     isSpicy: false,
     isPopular: false,
-    allergens: ''
+    quantity: 1,
+    ingredients: [],
+    nutritionalInfo: {
+      calories: '',
+      protein: '',
+      carbohydrates: '',
+      fat: ''
+    },
+    availableTime: {
+      start: '',
+      end: ''
+    }
   });
 
   useEffect(() => {
@@ -53,7 +65,14 @@ const Additem = () => {
       const payload = {
         ...formData,
         price: parseFloat(formData.price),
-        preparationTime: parseInt(formData.preparationTime)
+        preparationTime: formData.preparationTime,
+        quantity: parseInt(formData.quantity),
+        nutritionalInfo: {
+          calories: parseFloat(formData.nutritionalInfo.calories) || 0,
+          protein: parseFloat(formData.nutritionalInfo.protein) || 0,
+          carbohydrates: parseFloat(formData.nutritionalInfo.carbohydrates) || 0,
+          fat: parseFloat(formData.nutritionalInfo.fat) || 0
+        }
       };
 
       if (editingItem) {
@@ -81,10 +100,22 @@ const Additem = () => {
       category: '',
       preparationTime: '',
       description: '',
+      includes: 'Sambar and Chutney',
       isVegetarian: false,
       isSpicy: false,
       isPopular: false,
-      allergens: ''
+      quantity: 1,
+      ingredients: [],
+      nutritionalInfo: {
+        calories: '',
+        protein: '',
+        carbohydrates: '',
+        fat: ''
+      },
+      availableTime: {
+        start: '',
+        end: ''
+      }
     });
     setEditingItem(null);
   };
@@ -112,10 +143,22 @@ const Additem = () => {
       category: item.category,
       preparationTime: item.preparationTime,
       description: item.description || '',
+      includes: item.includes || 'Sambar and Chutney',
       isVegetarian: item.isVegetarian || false,
       isSpicy: item.isSpicy || false,
       isPopular: item.isPopular || false,
-      allergens: item.allergens || ''
+      quantity: item.quantity || 1,
+      ingredients: item.ingredients || [],
+      nutritionalInfo: item.nutritionalInfo || {
+        calories: '',
+        protein: '',
+        carbohydrates: '',
+        fat: ''
+      },
+      availableTime: item.availableTime || {
+        start: '',
+        end: ''
+      }
     });
     setEditingItem(item);
     setShowForm(true);
@@ -334,159 +377,271 @@ const Additem = () => {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
             <form onSubmit={handleSubmit} className="p-6">
-              <div className="flex justify-between items-center mb-6 border-b pb-3">
-                <h2 className="text-xl font-bold text-gray-800">{editingItem ? 'Update Food Item' : 'Add New Food Item'}</h2>
-                <button
-                  type="button"
-                  className="text-gray-500 hover:text-gray-700"
-                  onClick={() => setShowForm(false)}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Food Name*</label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="e.g., Masala Dosa"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Image URL*</label>
-                  <input
-                    type="text"
-                    name="image"
-                    placeholder="https://example.com/image.jpg"
-                    value={formData.image}
-                    onChange={handleChange}
-                    className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
-                    required
-                  />
+              {/* Basic Information Section */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Basic Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Food Name*</label>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="e.g., Masala Dosa"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Image URL*</label>
+                    <input
+                      type="text"
+                      name="image"
+                      placeholder="https://example.com/image.jpg"
+                      value={formData.image}
+                      onChange={handleChange}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)*</label>
-                  <input
-                    type="number"
-                    name="price"
-                    placeholder="e.g., 120"
-                    value={formData.price}
-                    onChange={handleChange}
-                    className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
-                    min="0"
-                    step="0.01"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category*</label>
-                  <input
-                    type="text"
-                    name="category"
-                    placeholder="e.g., South Indian Specials"
-                    value={formData.category}
-                    onChange={handleChange}
-                    className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
-                    required
-                    list="categories"
-                  />
-                  <datalist id="categories">
-                    {categories.map(cat => (
-                      <option key={cat} value={cat} />
-                    ))}
-                  </datalist>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Prep Time (mins)*</label>
-                  <input
-                    type="number"
-                    name="preparationTime"
-                    placeholder="e.g., 15"
-                    value={formData.preparationTime}
-                    onChange={handleChange}
-                    className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
-                    min="1"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea
-                  name="description"
-                  placeholder="Brief description of the dish"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500 h-24"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Allergens</label>
-                <input
-                  type="text"
-                  name="allergens"
-                  placeholder="e.g., dairy, nuts, gluten"
-                  value={formData.allergens}
-                  onChange={handleChange}
-                  className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="isVegetarian"
-                    name="isVegetarian"
-                    checked={formData.isVegetarian}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="isVegetarian" className="ml-2 block text-sm text-gray-700">
-                    Vegetarian
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="isSpicy"
-                    name="isSpicy"
-                    checked={formData.isSpicy}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="isSpicy" className="ml-2 block text-sm text-gray-700">
-                    Spicy
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="isPopular"
-                    name="isPopular"
-                    checked={formData.isPopular}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="isPopular" className="ml-2 block text-sm text-gray-700">
-                    Popular Item
-                  </label>
+              {/* Pricing and Category Section */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Pricing & Category</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)*</label>
+                    <input
+                      type="number"
+                      name="price"
+                      placeholder="e.g., 120"
+                      value={formData.price}
+                      onChange={handleChange}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                      min="0"
+                      step="0.01"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Category*</label>
+                    <input
+                      type="text"
+                      name="category"
+                      placeholder="e.g., South Indian Specials"
+                      value={formData.category}
+                      onChange={handleChange}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                      required
+                      list="categories"
+                    />
+                    <datalist id="categories">
+                      {categories.map(cat => (
+                        <option key={cat} value={cat} />
+                      ))}
+                    </datalist>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Prep Time*</label>
+                    <input
+                      type="text"
+                      name="preparationTime"
+                      placeholder="e.g., 15-20 mins"
+                      value={formData.preparationTime}
+                      onChange={handleChange}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
+              {/* Details Section */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Item Details</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500 h-24"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Includes</label>
+                    <input
+                      type="text"
+                      name="includes"
+                      value={formData.includes}
+                      onChange={handleChange}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Ingredients (comma-separated)</label>
+                    <input
+                      type="text"
+                      name="ingredients"
+                      value={formData.ingredients.join(', ')}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        ingredients: e.target.value.split(',').map(i => i.trim())
+                      })}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Nutritional Information */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Nutritional Information</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Calories</label>
+                    <input
+                      type="number"
+                      name="nutritionalInfo.calories"
+                      value={formData.nutritionalInfo.calories}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        nutritionalInfo: { ...formData.nutritionalInfo, calories: e.target.value }
+                      })}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Protein</label>
+                    <input
+                      type="number"
+                      name="nutritionalInfo.protein"
+                      value={formData.nutritionalInfo.protein}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        nutritionalInfo: { ...formData.nutritionalInfo, protein: e.target.value }
+                      })}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Carbohydrates</label>
+                    <input
+                      type="number"
+                      name="nutritionalInfo.carbohydrates"
+                      value={formData.nutritionalInfo.carbohydrates}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        nutritionalInfo: { ...formData.nutritionalInfo, carbohydrates: e.target.value }
+                      })}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Fat</label>
+                    <input
+                      type="number"
+                      name="nutritionalInfo.fat"
+                      value={formData.nutritionalInfo.fat}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        nutritionalInfo: { ...formData.nutritionalInfo, fat: e.target.value }
+                      })}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Availability Section */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Availability</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                    <input
+                      type="number"
+                      name="quantity"
+                      value={formData.quantity}
+                      onChange={handleChange}
+                      min="1"
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Available From</label>
+                    <input
+                      type="time"
+                      name="availableTime.start"
+                      value={formData.availableTime.start}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        availableTime: { ...formData.availableTime, start: e.target.value }
+                      })}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Available Until</label>
+                    <input
+                      type="time"
+                      name="availableTime.end"
+                      value={formData.availableTime.end}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        availableTime: { ...formData.availableTime, end: e.target.value }
+                      })}
+                      className="border p-2 w-full rounded focus:ring-red-500 focus:border-red-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Item Properties */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Item Properties</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="isVegetarian"
+                      name="isVegetarian"
+                      checked={formData.isVegetarian}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="isVegetarian" className="ml-2 text-sm text-gray-700">Vegetarian</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="isSpicy"
+                      name="isSpicy"
+                      checked={formData.isSpicy}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="isSpicy" className="ml-2 text-sm text-gray-700">Spicy</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="isPopular"
+                      name="isPopular"
+                      checked={formData.isPopular}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="isPopular" className="ml-2 text-sm text-gray-700">Popular Item</label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form Actions */}
               <div className="flex gap-4 border-t pt-4">
                 <button
                   type="submit"

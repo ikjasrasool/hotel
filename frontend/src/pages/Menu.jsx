@@ -9,6 +9,8 @@ const Menu = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { addToCart, cartItems } = useCart();
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetchFoodItems();
@@ -68,7 +70,206 @@ const Menu = () => {
     });
   };
 
-  // Get all unique categories
+  const openModal = (item) => {
+    setSelectedItem(item);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setSelectedItem(null);
+    setShowModal(false);
+  };
+
+  const FoodDetailModal = ({ item, onClose }) => {
+    if (!item) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-6">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-2xl font-bold text-gray-800">{item.name}</h2>
+              <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mb-6">
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-64 object-cover rounded-lg"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://via.placeholder.com/400x320?text=Delicious+Food";
+                }}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-2xl font-bold text-red-600">₹{item.price}</span>
+                <span className="text-gray-600">Prep Time: {item.preparationTime} min</span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {item.isVegetarian && (
+                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Vegetarian</span>
+                )}
+                {item.isSpicy && (
+                  <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Spicy</span>
+                )}
+                {item.isPopular && (
+                  <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Popular</span>
+                )}
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-2">📝 Description</h3>
+                <p className="text-gray-600">{item.description}</p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-2">📦 Includes</h3>
+                <p className="text-gray-600">{item.includes}</p>
+              </div>
+
+              {item.ingredients.length > 0 && (
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-2">🥘 Ingredients</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {item.ingredients.map((ingredient, index) => (
+                      <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                        {ingredient}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {item.nutritionalInfo && (
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-2">📊 Nutritional Information</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-gray-50 p-3 rounded">
+                      <div className="text-sm text-gray-500">Calories</div>
+                      <div className="font-semibold">{item.nutritionalInfo.calories} kcal</div>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded">
+                      <div className="text-sm text-gray-500">Protein</div>
+                      <div className="font-semibold">{item.nutritionalInfo.protein}g</div>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded">
+                      <div className="text-sm text-gray-500">Carbohydrates</div>
+                      <div className="font-semibold">{item.nutritionalInfo.carbohydrates}g</div>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded">
+                      <div className="text-sm text-gray-500">Fat</div>
+                      <div className="font-semibold">{item.nutritionalInfo.fat}g</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {item.availableTime && (
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-2">⏰ Available Time</h3>
+                  <p className="text-gray-600">
+                    {item.availableTime.start} - {item.availableTime.end}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => {
+                  addToCart(item);
+                  onClose();
+                }}
+                className={`px-6 py-2 rounded text-sm font-medium transition ${
+                  isItemInCart(item._id || item.id)
+                    ? 'bg-gray-300 text-gray-700'
+                    : 'bg-red-600 text-white hover:bg-red-700'
+                }`}
+                disabled={isItemInCart(item._id || item.id)}
+              >
+                {isItemInCart(item._id || item.id) ? 'Already in Cart' : 'Add to Cart'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderFoodItem = (item) => (
+    <div
+      key={item._id || item.id}
+      className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 flex flex-col"
+    >
+      <div className="h-48 bg-gray-100 relative">
+        <img
+          src={item.image}
+          alt={item.name}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://via.placeholder.com/400x320?text=Delicious+Food";
+          }}
+        />
+        {item.isPopular && (
+          <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 m-2 rounded-full">
+            Popular
+          </div>
+        )}
+      </div>
+
+      <div className="p-5 flex-grow flex flex-col">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-xl font-bold text-gray-800">{item.name}</h3>
+          <span className="font-bold text-red-600 text-lg">₹{item.price}</span>
+        </div>
+
+        <p className="text-gray-600 mb-4 text-sm flex-grow line-clamp-2">{item.description}</p>
+
+        <div className="flex flex-wrap gap-2 mb-3">
+          {item.isVegetarian && (
+            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Vegetarian</span>
+          )}
+          {item.isSpicy && (
+            <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Spicy</span>
+          )}
+        </div>
+
+        <div className="flex justify-between items-center mt-auto">
+          <button
+            onClick={() => openModal(item)}
+            className="text-red-600 hover:text-red-700 text-sm font-medium"
+          >
+            View Details
+          </button>
+          <button
+            onClick={() => addToCart(item)}
+            className={`px-4 py-2 rounded text-sm font-medium transition ${
+              isItemInCart(item._id || item.id)
+                ? 'bg-gray-300 text-gray-700'
+                : 'bg-red-600 text-white hover:bg-red-700'
+            }`}
+            disabled={isItemInCart(item._id || item.id)}
+          >
+            {isItemInCart(item._id || item.id) ? 'Ordered' : 'Order'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   const categories = Object.keys(groupedByCategory);
 
   if (loading) {
@@ -139,50 +340,7 @@ const Menu = () => {
         <div className="mb-10 bg-red-50 border border-red-100 rounded-lg p-6">
           <h2 className="text-2xl font-bold text-red-800 mb-4">Today's Special</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {foodItems.filter(item => item.isPopular).slice(0, 3).map((item) => (
-              <div
-                key={`special-${item._id || item.id}`}
-                className="bg-white rounded-lg overflow-hidden shadow-md border border-red-100 hover:shadow-lg transition-shadow duration-300 flex flex-col"
-              >
-                <div className="h-48 bg-gray-100 relative">
-                  <img
-                    src={item.image || "https://via.placeholder.com/400x320?text=Delicious+Food"}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "https://via.placeholder.com/400x320?text=Delicious+Food";
-                    }}
-                  />
-                  <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 m-2 rounded-full">
-                    Special
-                  </div>
-                </div>
-                <div className="p-5 flex-grow flex flex-col">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-bold text-gray-800">{item.name}</h3>
-                    <span className="font-bold text-red-600 text-lg">₹{item.price}</span>
-                  </div>
-                  {item.description && (
-                    <p className="text-gray-600 mb-4 text-sm flex-grow">{item.description}</p>
-                  )}
-                  <div className="flex justify-between items-center mt-auto">
-                    <span className="text-sm text-gray-500">Prep Time: {item.preparationTime} min</span>
-                    <button
-                      onClick={() => addToCart(item)}
-                      className={`px-4 py-2 rounded text-sm font-medium transition ${
-                        isItemInCart(item._id || item.id)
-                          ? 'bg-gray-300 text-gray-700'
-                          : 'bg-red-600 text-white hover:bg-red-700'
-                      }`}
-                      disabled={isItemInCart(item._id || item.id)}
-                    >
-                      {isItemInCart(item._id || item.id) ? 'Ordered' : 'Order'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+            {foodItems.filter(item => item.isPopular).slice(0, 3).map((item) => renderFoodItem(item))}
           </div>
         </div>
 
@@ -209,59 +367,7 @@ const Menu = () => {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredItems[category].map((item) => (
-                  <div
-                    key={item._id || item.id}
-                    className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 flex flex-col"
-                  >
-                    <div className="h-48 bg-gray-100">
-                      <img
-                        src={item.image || "https://via.placeholder.com/400x320?text=Delicious+Food"}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "https://via.placeholder.com/400x320?text=Delicious+Food";
-                        }}
-                      />
-                    </div>
-
-                    <div className="p-5 flex-grow flex flex-col">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-xl font-bold text-gray-800">{item.name}</h3>
-                        <span className="font-bold text-red-600 text-lg">₹{item.price}</span>
-                      </div>
-
-                      {item.description && (
-                        <p className="text-gray-600 mb-4 text-sm flex-grow">{item.description}</p>
-                      )}
-
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {item.isVegetarian && (
-                          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Vegetarian</span>
-                        )}
-                        {item.isSpicy && (
-                          <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Spicy</span>
-                        )}
-                      </div>
-
-                      <div className="flex justify-between items-center mt-auto">
-                        <span className="text-sm text-gray-500">Prep Time: {item.preparationTime} min</span>
-                        <button
-                          onClick={() => addToCart(item)}
-                          className={`px-4 py-2 rounded text-sm font-medium transition ${
-                            isItemInCart(item._id || item.id)
-                              ? 'bg-gray-300 text-gray-700'
-                              : 'bg-red-600 text-white hover:bg-red-700'
-                          }`}
-                          disabled={isItemInCart(item._id || item.id)}
-                        >
-                          {isItemInCart(item._id || item.id) ? 'Ordered' : 'Order'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                {filteredItems[category].map((item) => renderFoodItem(item))}
               </div>
             </div>
           ))
@@ -284,6 +390,8 @@ const Menu = () => {
           </div>
         </div>
 
+        {/* Add the modal component */}
+        {showModal && <FoodDetailModal item={selectedItem} onClose={closeModal} />}
 
         {/* Footer */}
         <div className="mt-10 text-center text-sm text-gray-500">
@@ -296,3 +404,4 @@ const Menu = () => {
 };
 
 export default Menu;
+

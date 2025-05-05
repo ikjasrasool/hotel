@@ -1,169 +1,401 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import CheckoutForm from '../components/CheckoutForm';
+import { Printer, Check, Download, ArrowLeft } from 'lucide-react';
+// Import jsPDF for PDF generation
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, total, clearCart } = useCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [showCheckoutForm, setShowCheckoutForm] = useState(false);
+  const [orderComplete, setOrderComplete] = useState(false);
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const receiptRef = useRef();
   const navigate = useNavigate();
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  if (cartItems.length === 0 && !orderComplete) {
+    return (
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">Your cart is empty</h2>
+            <p className="text-gray-600 mb-8">Add some delicious items to get started!</p>
+            <button
+                onClick={() => navigate('/menu')}
+                className="bg-red-600 text-white px-8 py-3 rounded-full hover:bg-red-700 transform hover:scale-105 transition-all duration-300 shadow-lg"
+            >
+              Browse Menu
+            </button>
+          </div>
+        </div>
+    );
+  }
+
   const handleCheckout = () => {
-    setIsCheckingOut(true);
-    setTimeout(() => {
-      clearCart();
-      setIsCheckingOut(false);
-      navigate('/');
-      alert('Order placed successfully! Thank you for your order.');
-    }, 2000);
+    setShowCheckoutForm(true);
   };
 
-  if (cartItems.length === 0) {
+  const handlePrint = () => {
+    setIsPrinting(true);
+
+    // You can implement actual printing functionality here
+    // For example, using react-to-print library:
+    // Example: if you have react-to-print installed:
+    // const handlePrint = useReactToPrint({
+    //   content: () => receiptRef.current,
+    //   documentTitle: `Food_Order_${orderDetails.orderCode}`,
+    // });
+    // handlePrint();
+
+    // For now, we'll use a timeout to simulate printing
+    setTimeout(() => {
+      setIsPrinting(false);
+      window.print(); // Basic browser print functionality
+    }, 1000);
+  };
+
+  // Enhanced PDF generation function
+  const generatePDF = async () => {
+    if (!receiptRef.current) {
+      alert("Receipt content not found. Please try again.");
+      return;
+    }
+
+    setIsGeneratingPDF(true);
+
+    try {
+      // Configure html2canvas with optimized settings
+      const canvas = await html2canvas(receiptRef.current, {
+        scale: 3, // Higher scale for better quality
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        allowTaint: true,
+        removeContainer: true,
+        imageTimeout: 15000, // Increased timeout for image loading
+      });
+
+      // Configure PDF settings
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      // Create PDF with better quality settings
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true,
+        quality: 0.98
+      });
+
+      // Add image to PDF with improved quality
+      pdf.addImage(
+        canvas.toDataURL('image/jpeg', 1.0),
+        'JPEG',
+        0,
+        0,
+        imgWidth,
+        imgHeight,
+        undefined,
+        'FAST'
+      );
+
+      // Save with error handling
+      await pdf.save(`Food_Order_${orderDetails.orderCode}.pdf`);
+      
+    } catch (error) {
+      console.error("PDF Generation Error:", error);
+      alert("PDF generation failed. Please check if all images are loaded and try again.");
+      
+      // Attempt recovery after a short delay
+      setTimeout(() => {
+        setIsGeneratingPDF(false);
+      }, 1000);
+      return;
+    }
+
+    setIsGeneratingPDF(false);
+  };
+
+  const handleOrderSubmit = async (formData) => {
+    setIsCheckingOut(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/orders/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          items: cartItems.map(item => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            _id: item._id
+          })),
+          totalAmount: total
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setOrderDetails(data.order);
+        setOrderComplete(true);
+        clearCart();
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      alert('Error placing order: ' + error.message);
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
+
+  if (orderComplete && orderDetails) {
+    // Format date for receipt
+    const orderDate = new Date().toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    // Calculate subtotal, tax and final total
+    const subtotal = orderDetails.totalAmount;
+    const taxRate = 0.05; // 5% tax
+    const tax = subtotal * taxRate;
+    const finalTotal = subtotal + tax;
+
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <img
-            src="https://img.freepik.com/free-vector/empty-shopping-cart-white_1308-56838.jpg"
-            alt="Empty Cart"
-            className="w-64 h-64 mx-auto mb-8"
-          />
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Your Cart is Empty</h2>
-          <p className="text-gray-600 mb-8">Looks like you haven't added any delicious items yet!</p>
-          <button
-            onClick={() => navigate('/menu')}
-            className="bg-red-600 text-white px-8 py-3 rounded-full hover:bg-red-700 transition duration-300 shadow-lg hover:shadow-xl"
-          >
-            Explore Menu
-          </button>
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            {/* Success Message */}
+            <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8 text-center shadow-sm">
+              <div className="inline-flex items-center justify-center bg-green-100 rounded-full p-2 mb-4">
+                <Check size={24} className="text-green-600" />
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900">Order Confirmed!</h2>
+              <p className="text-green-700 mt-2">Your order has been successfully placed and is being processed.</p>
+            </div>
+
+            {/* Actual Receipt - This is what gets printed */}
+            <div
+                ref={receiptRef}
+                className="bg-white rounded-xl shadow-xl overflow-hidden transform transition-all duration-500 hover:shadow-2xl"
+            >
+              {/* Receipt Header */}
+              <div className="bg-red-600 text-white px-8 py-6">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-2xl font-bold">Food Order Receipt</h3>
+                    <p className="opacity-80 mt-1">Thank you for your order!</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">{orderDate}</p>
+                    <p className="mt-1 text-xl font-bold">#{orderDetails.orderCode}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Customer Details */}
+              <div className="p-8 border-b">
+                <h4 className="text-lg font-semibold text-gray-700 mb-4">Customer Information</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Name</p>
+                    <p className="font-medium">{orderDetails.customerName}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Email</p>
+                    <p className="font-medium">{orderDetails.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Age</p>
+                    <p className="font-medium">{orderDetails.age} years</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Bus Number</p>
+                    <p className="font-medium">{orderDetails.busNumber}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Items */}
+              <div className="p-8">
+                <h4 className="text-lg font-semibold text-gray-700 mb-4">Order Details</h4>
+                <table className="w-full">
+                  <thead>
+                  <tr className="border-b text-left">
+                    <th className="pb-2">Item</th>
+                    <th className="pb-2">Qty</th>
+                    <th className="pb-2">Price</th>
+                    <th className="pb-2 text-right">Subtotal</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {orderDetails.items.map((item, index) => (
+                      <tr key={index} className="border-b border-gray-100">
+                        <td className="py-3">{item.name}</td>
+                        <td className="py-3">{item.quantity}</td>
+                        <td className="py-3">₹{item.price.toFixed(2)}</td>
+                        <td className="py-3 text-right">₹{(item.price * item.quantity).toFixed(2)}</td>
+                      </tr>
+                  ))}
+                  </tbody>
+                </table>
+
+                {/* Totals */}
+                <div className="mt-6 space-y-2">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Subtotal</span>
+                    <span>₹{subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Tax (5%)</span>
+                    <span>₹{tax.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between font-bold text-lg pt-2 border-t">
+                    <span>Total Amount</span>
+                    <span>₹{finalTotal.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="mt-8 text-center text-gray-500 text-sm">
+                  <p>For any questions about your order, please contact us at</p>
+                  <p className="font-medium">support@foodservice.com | +91 98765 43210</p>
+                  <p className="mt-2">Thank you for your business!</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-8 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <button
+                  onClick={handlePrint}
+                  disabled={isPrinting}
+                  className="flex items-center justify-center bg-gray-800 text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition duration-300 shadow-lg disabled:bg-gray-400"
+              >
+                <Printer size={18} className="mr-2" />
+                {isPrinting ? 'Preparing...' : 'Print Receipt'}
+              </button>
+              <button
+                  onClick={generatePDF}
+                  disabled={isGeneratingPDF}
+                  className="flex items-center justify-center bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 shadow-lg disabled:bg-blue-400"
+              >
+                <Download size={18} className="mr-2" />
+                {isGeneratingPDF ? 'Generating PDF...' : 'Save as PDF'}
+              </button>
+              <button
+                  onClick={() => navigate('/menu')}
+                  className="flex items-center justify-center bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition duration-300 shadow-lg"
+              >
+                <ArrowLeft size={18} className="mr-2" />
+                Return to Menu
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Your Cart ({totalItems} items)</h2>
-          <button
-            onClick={clearCart}
-            className="text-red-600 hover:text-red-800 font-medium flex items-center"
-          >
-            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            Clear Cart
-          </button>
-        </div>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold mb-8 text-gray-800 text-center sm:text-left">Your Cart</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2">
-            <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2">
               {cartItems.map((item) => (
-                <div key={item._id} className="p-6 border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center">
-                    <div className="relative">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-32 h-32 object-cover rounded-lg"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "https://via.placeholder.com/128?text=Food";
-                        }}
-                      />
-                      {item.isPopular && (
-                        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 rounded-bl-lg">Popular</span>
-                      )}
+                  <div
+                      key={item._id}
+                      className="bg-white p-6 rounded-xl shadow-md mb-4 transform transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
+                  >
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-xl font-semibold text-gray-800">{item.name}</h3>
+                      <p className="font-bold text-lg text-red-600">₹{item.price * item.quantity}</p>
                     </div>
-                    <div className="ml-6 flex-1">
-                      <div className="flex justify-between">
-                        <h3 className="text-xl font-semibold text-gray-800">{item.name}</h3>
+                    <div className="flex justify-between items-center mt-4">
+                      <div className="flex items-center space-x-3">
                         <button
-                          onClick={() => removeFromCart(item._id)}
-                          className="text-gray-400 hover:text-red-600 transition-colors"
+                            onClick={() => updateQuantity(item._id, Math.max(0, item.quantity - 1))}
+                            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-200"
                         >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                          </svg>
+                          -
+                        </button>
+                        <span className="font-medium text-lg">{item.quantity}</span>
+                        <button
+                            onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-200"
+                        >
+                          +
                         </button>
                       </div>
-                      <p className="text-gray-600 mt-1">{item.description}</p>
-                      <div className="mt-4 flex items-center justify-between">
-                        <div className="flex items-center border rounded-lg">
-                          <button
-                            onClick={() => updateQuantity(item._id, item.quantity - 1)}
-                            className="px-3 py-1 text-gray-600 hover:text-red-600 hover:bg-red-50"
-                          >
-                            −
-                          </button>
-                          <span className="px-4 py-1 border-x text-gray-800">{item.quantity}</span>
-                          <button
-                            onClick={() => updateQuantity(item._id, item.quantity + 1)}
-                            className="px-3 py-1 text-gray-600 hover:text-red-600 hover:bg-red-50"
-                          >
-                            +
-                          </button>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-gray-500">₹{item.price} each</p>
-                          <p className="text-lg font-semibold text-gray-800">₹{item.price * item.quantity}</p>
-                        </div>
-                      </div>
+                      <button
+                          onClick={() => removeFromCart(item._id)}
+                          className="text-red-600 hover:text-red-800 font-medium transition-colors duration-200"
+                      >
+                        Remove
+                      </button>
                     </div>
                   </div>
-                </div>
               ))}
             </div>
-          </div>
 
-          <div className="md:col-span-1">
-            <div className="bg-white shadow-lg rounded-lg p-6 sticky top-4">
-              <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between text-gray-600">
-                  <span>Subtotal ({totalItems} items)</span>
-                  <span>₹{total}</span>
-                </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Delivery Fee</span>
-                  <span>₹40</span>
-                </div>
-                <div className="border-t pt-3 flex justify-between font-semibold text-lg">
-                  <span>Total</span>
-                  <span>₹{total + 40}</span>
-                </div>
-              </div>
-              <button
-                onClick={handleCheckout}
-                disabled={isCheckingOut}
-                className={`w-full py-3 px-4 rounded-lg text-white font-medium ${
-                  isCheckingOut 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-red-600 hover:bg-red-700'
-                } transition duration-300 shadow-lg hover:shadow-xl flex justify-center items-center`}
-              >
-                {isCheckingOut ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Processing...
-                  </>
+            <div className="md:col-span-1">
+              <div className="bg-white shadow-xl rounded-xl p-6 sticky top-4 transform transition-all duration-300 hover:shadow-2xl">
+                {showCheckoutForm ? (
+                    <div>
+                      <h3 className="text-xl font-semibold mb-4">Checkout Details</h3>
+                      <CheckoutForm
+                          onSubmit={handleOrderSubmit}
+                          isLoading={isCheckingOut}
+                      />
+                    </div>
                 ) : (
-                  'Proceed to Checkout'
+                    <>
+                      <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex justify-between">
+                          <span>Items ({totalItems})</span>
+                          <span>₹{total}</span>
+                        </div>
+                      </div>
+                      <div className="border-t pt-4 mb-4">
+                        <div className="flex justify-between font-bold">
+                          <span>Total</span>
+                          <span>₹{total}</span>
+                        </div>
+                      </div>
+                      <button
+                          onClick={handleCheckout}
+                          className="w-full py-3 px-4 rounded-lg text-white font-medium bg-red-600 hover:bg-red-700 transition duration-300 shadow-lg hover:shadow-xl"
+                      >
+                        Proceed to Checkout
+                      </button>
+                    </>
                 )}
-              </button>
-              <button
-                onClick={() => navigate('/menu')}
-                className="w-full mt-4 py-3 px-4 rounded-lg border border-red-600 text-red-600 hover:bg-red-50 transition duration-300"
-              >
-                Continue Shopping
-              </button>
+                <button
+                    onClick={() => navigate('/menu')}
+                    className="w-full mt-4 py-3 px-4 rounded-lg border border-red-600 text-red-600 hover:bg-red-50 transition duration-300"
+                >
+                  Continue Shopping
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

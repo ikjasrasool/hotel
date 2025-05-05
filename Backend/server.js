@@ -5,12 +5,13 @@ require('dotenv').config();
 
 const app = express();
 
-
-const foodRoutes = require('./routes/food');     // 👈 New route
+const foodRoutes = require('./routes/food');
+const orderRoutes = require('./routes/orders');     // 👈 Add orders routes
 
 app.use(cors());
 app.use(express.json());
-app.use('/api', foodRoutes); // 👈 Register food routes
+app.use('/api', foodRoutes);
+app.use('/api/orders', orderRoutes); // 👈 Register orders routes
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {

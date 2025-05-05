@@ -7,7 +7,7 @@ import UserLayout from './layouts/UserLayout';
 import AdminLayout from './layouts/AdminLayout';
 
 import Home from './pages/Home';
-import Menu from './pages/Menu';
+import MenuPage from './pages/Menu';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import AddItem from './pages/AddItem';
@@ -23,7 +23,7 @@ const App = () => {
           {/* User Routes */}
           <Route element={<UserLayout />}>
             <Route path="/" element={<Home />} />
-            <Route path="/menu" element={<Menu />} />
+            <Route path="/menu" element={<MenuPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />

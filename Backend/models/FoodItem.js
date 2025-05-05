@@ -20,17 +20,16 @@ const foodItemSchema = new mongoose.Schema({
     required: true
   },
   preparationTime: {
-    type: Number,
-    required: true,
-    min: 1
+    type: String, // Changed from Number to String
+    required: true
   },
   description: {
     type: String,
     default: ''
   },
-  allergens: {
+  includes: { // Changed from allergens to includes
     type: String,
-    default: ''
+    default: 'Sambar and Chutney' // Default value
   },
   isVegetarian: {
     type: Boolean,
@@ -43,7 +42,13 @@ const foodItemSchema = new mongoose.Schema({
   isPopular: {
     type: Boolean,
     default: false
+  },
+  quantity: { // New field
+    type: Number,
+    required: true,
+    min: 1
   }
 }, { timestamps: true });
 
 module.exports = mongoose.model('FoodItem', foodItemSchema);
+

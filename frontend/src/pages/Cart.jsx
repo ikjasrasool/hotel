@@ -5,6 +5,7 @@ import CheckoutForm from '../components/CheckoutForm';
 import { Printer, Check, ArrowLeft, Download, ShoppingBag, Trash2, Plus, Minus, RefreshCw, AlertCircle } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import axios from 'axios';
 
 
 const Cart = () => {
@@ -315,36 +316,148 @@ const Cart = () => {
   const handleOrderSubmit = async (formData) => {
     setIsCheckingOut(true);
     try {
-      const response = await fetch('http://localhost:5000/api/orders/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
+      // For Cash on Delivery
+      if (formData.paymentMethod === 'cash') {
+        // Create order directly without Razorpay
+        const response = await axios.post('http://localhost:5000/api/orders/create', {
+          customerName: formData.customerName,
+          email: formData.email,
+          age: formData.age,
+          busNumber: formData.busNumber,
           items: cartItems.map(item => ({
             name: item.name,
             price: item.price,
             quantity: item.quantity,
             _id: item._id
           })),
-          totalAmount: total
-        }),
-      });
+          totalAmount: total,
+          paymentMethod: 'cash',
+          paymentStatus: 'pending' // Payment will be collected on delivery
+        });
 
-      const data = await response.json();
-      if (data.success) {
-        setOrderDetails(data.order);
-        setOrderComplete(true);
-        clearCart();
-        // Scroll to top on order completion
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        throw new Error(data.error);
+        if (response.data.success) {
+          setOrderDetails(response.data.order);
+          setOrderComplete(true);
+          clearCart();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          throw new Error(response.data.error || 'Failed to create order');
+        }
+      }
+      // For Online Payment (Razorpay)
+      else if (formData.paymentMethod === 'online') {
+        // Step 1: Create Razorpay order from backend
+        const orderAmount = Math.round(finalTotal); // Convert to paise and ensure it's an integer
+        
+        const orderResponse = await axios.post('http://localhost:5000/api/payment/create-order', {
+          amount: orderAmount,
+          currency: 'INR',
+          receipt: `receipt_${Date.now()}`
+        });
+        
+        const razorpayOrder = orderResponse.data;
+        
+        if (!razorpayOrder.id) {
+          throw new Error('Failed to create Razorpay order');
+        }
+
+        // Step 2: Load Razorpay script dynamically if not already loaded
+        if (!window.Razorpay) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = resolve;
+            script.onerror = () => reject(new Error('Failed to load Razorpay SDK'));
+            document.body.appendChild(script);
+          });
+        }
+
+        // Step 3: Configure Razorpay options
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount: razorpayOrder.amount,
+          currency: razorpayOrder.currency,
+          name: 'Hotel Saravana Bhavan',
+          description: 'Food Order Payment',
+          order_id: razorpayOrder.id,
+          handler: async function(response) {
+            try {
+              // Step 4: Verify payment on backend
+              const verifyResponse = await axios.post('http://localhost:5000/api/payment/verify', {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              });
+              
+              if (verifyResponse.data.success) {
+                // Step 5: Create order in database after payment verification
+                const createOrderResponse = await axios.post('http://localhost:5000/api/orders/create', {
+                  customerName: formData.customerName,
+                  email: formData.email,
+                  age: formData.age,
+                  busNumber: formData.busNumber,
+                  items: cartItems.map(item => ({
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                    _id: item._id
+                  })),
+                  totalAmount: total,
+                  paymentMethod: 'online',
+                  paymentStatus: 'completed',
+                  razorpayPaymentId: response.razorpay_payment_id,
+                  razorpayOrderId: response.razorpay_order_id,
+                  razorpaySignature: response.razorpay_signature
+                });
+                
+                if (createOrderResponse.data.success) {
+                  setOrderDetails(createOrderResponse.data.order);
+                  setOrderComplete(true);
+                  clearCart();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                  throw new Error(createOrderResponse.data.error || 'Failed to create order');
+                }
+              } else {
+                throw new Error('Payment verification failed');
+              }
+            } catch (error) {
+              console.error('Payment processing error:', error);
+              alert('Error processing payment: ' + error.message);
+            } finally {
+              setIsCheckingOut(false);
+            }
+          },
+          prefill: {
+            name: formData.customerName,
+            email: formData.email,
+          },
+          notes: {
+            address: "Hotel Saravana Bhavan"
+          },
+          theme: {
+            color: "#DC2626"
+          },
+          modal: {
+            ondismiss: function() {
+              setIsCheckingOut(false);
+            }
+          }
+        };
+
+        // Step 6: Create and open Razorpay payment form
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+        
+        // Handle Razorpay form closure
+        rzp.on('payment.failed', function(response) {
+          alert(`Payment failed: ${response.error.description}`);
+          setIsCheckingOut(false);
+        });
       }
     } catch (error) {
-      alert('Error placing order: ' + error.message);
-    } finally {
+      console.error('Checkout error:', error);
+      alert('Error during checkout: ' + error.message);
       setIsCheckingOut(false);
     }
   };
@@ -729,3 +842,50 @@ const Cart = () => {
 };
 
 export default Cart;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

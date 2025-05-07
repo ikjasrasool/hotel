@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { AlertCircle, Check, CreditCard, User, MapPin, Mail, Calendar, Bus } from 'lucide-react';
+import { AlertCircle, Check, CreditCard, User, Mail, Calendar, Bus } from 'lucide-react';
 
 const CheckoutForm = ({ onSubmit, isLoading }) => {
   const [formData, setFormData] = useState({
     customerName: '',
     email: '',
     age: '',
-    busNumber: ''
+    busNumber: '',
+    paymentMethod: 'cash' // Default to cash on delivery
   });
   
   const [errors, setErrors] = useState({});
@@ -29,6 +30,13 @@ const CheckoutForm = ({ onSubmit, isLoading }) => {
     }
     
     setFormTouched(true);
+  };
+
+  const handlePaymentMethodChange = (method) => {
+    setFormData({
+      ...formData,
+      paymentMethod: method
+    });
   };
 
   const validateField = (name, value) => {
@@ -67,7 +75,8 @@ const CheckoutForm = ({ onSubmit, isLoading }) => {
     const newErrors = {};
     let isValid = true;
 
-    Object.keys(formData).forEach(field => {
+    // Validate all fields except payment method
+    ['customerName', 'email', 'age', 'busNumber'].forEach(field => {
       const error = validateField(field, formData[field]);
       if (error) {
         newErrors[field] = error;
@@ -256,65 +265,78 @@ const CheckoutForm = ({ onSubmit, isLoading }) => {
         <div className="mt-8">
           <h3 className="text-lg font-medium text-gray-800 mb-4">Payment Method</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="border-2 border-red-500 rounded-lg p-4 cursor-pointer bg-red-50 relative">
-              <div className="absolute top-3 right-3 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                <Check size={14} className="text-white" />
-              </div>
+            {/* <div 
+              className={`border-2 ${formData.paymentMethod === 'cash' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'} rounded-lg p-4 cursor-pointer relative`}
+              onClick={() => handlePaymentMethodChange('cash')}
+            >
+              {formData.paymentMethod === 'cash' && (
+                <div className="absolute top-3 right-3 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                  <Check size={14} className="text-white" />
+                </div>
+              )}
               <div className="flex items-center">
-                <CreditCard size={20} className="text-red-500 mr-3" />
-                <span className="font-medium">Cash on Delivery</span>
+                <CreditCard size={20} className={formData.paymentMethod === 'cash' ? "text-red-500 mr-3" : "text-gray-400 mr-3"} />
+                <span className={formData.paymentMethod === 'cash' ? "font-medium" : "font-medium text-gray-500"}>Cash on Delivery</span>
               </div>
               <p className="text-xs text-gray-500 mt-2 ml-8">Pay when your food arrives</p>
-            </div>
+            </div> */}
             
-            <div className="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-gray-300 hover:bg-gray-50 opacity-50">
+            <div 
+              className={`border-2 ${formData.paymentMethod === 'online' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'} rounded-lg p-4 cursor-pointer relative`}
+              onClick={() => handlePaymentMethodChange('online')}
+            >
+              {formData.paymentMethod === 'online' && (
+                <div className="absolute top-3 right-3 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                  <Check size={14} className="text-white" />
+                </div>
+              )}
               <div className="flex items-center">
-                <CreditCard size={20} className="text-gray-400 mr-3" />
-                <span className="font-medium text-gray-500">Online Payment</span>
+                <CreditCard size={20} className={formData.paymentMethod === 'online' ? "text-red-500 mr-3" : "text-gray-400 mr-3"} />
+                <span className={formData.paymentMethod === 'online' ? "font-medium" : "font-medium text-gray-500"}>Online Payment</span>
               </div>
-              <p className="text-xs text-gray-500 mt-2 ml-8">Coming soon</p>
+              <p className="text-xs text-gray-500 mt-2 ml-8">Pay securely with Razorpay</p>
             </div>
           </div>
-        </div>
 
-        {/* Terms and conditions */}
-        <div className="mt-6">
-          <label className="flex items-start">
-            <input
-              type="checkbox"
-              checked={true}
-              readOnly
-              className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-            />
-            <span className="ml-2 text-sm text-gray-600">
-              I agree to the <a href="#" className="text-red-600 hover:text-red-700 font-medium">Terms & Conditions</a> and <a href="#" className="text-red-600 hover:text-red-700 font-medium">Privacy Policy</a>
-            </span>
-          </label>
-        </div>
+          {/* Terms and conditions */}
+          <div className="mt-6">
+            <label className="flex items-start">
+              <input
+                type="checkbox"
+                checked={true}
+                readOnly
+                className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+              />
+              <span className="ml-2 text-sm text-gray-600">
+                I agree to the <a href="#" className="text-red-600 hover:text-red-700 font-medium">Terms & Conditions</a> and <a href="#" className="text-red-600 hover:text-red-700 font-medium">Privacy Policy</a>
+              </span>
+            </label>
+          </div>
 
-        {/* Submit Button */}
-        <div className="mt-8">
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`
-              w-full flex items-center justify-center py-3 px-4 rounded-lg text-white font-medium
-              ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700 transform hover:scale-[1.01]'}
-              transition-all duration-300 shadow-lg hover:shadow-xl
-            `}
-          >
-            {isLoading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Processing Order...
-              </>
-            ) : (
-              'Place Order'
-            )}
-          </button>
+          {/* Submit Button */}
+          <div className="mt-8">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`
+                w-full flex items-center justify-center py-3 px-4 rounded-lg text-white font-medium
+                ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700 transform hover:scale-[1.01]'}
+                transition-all duration-300 shadow-lg hover:shadow-xl
+              `}
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Processing Order...
+                </>
+              ) : (
+                `Place Order ${formData.paymentMethod === 'online' ? 'and Pay' : ''}`
+              )}
+            </button>
+          </div>
         </div>
         
         {/* Security badge */}

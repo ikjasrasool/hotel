@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Phone, Mail, MapPin, Clock, Users, MessageSquare, Bus, AlertCircle, Check, Send } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+
 
 const Contact = () => {
   const [formData, setState] = useState({
@@ -19,14 +21,42 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Form validation would go here in a real implementation
-    // This is a simple simulation of form submission
+  
     if (formData.name && formData.email && formData.message) {
-      setState(prev => ({ ...prev, submitted: true, error: false }));
+      emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      )
+      .then((result) => {
+        console.log(result.text);
+        setState({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: '',
+          submitted: true,
+          error: false
+        });
+      })
+      .catch((error) => {
+        console.log(error.text);
+        setState(prev => ({ ...prev, error: true }));
+      });
     } else {
       setState(prev => ({ ...prev, error: true }));
     }
   };
+  
+  
 
   // Frequently asked questions
   const faqs = [

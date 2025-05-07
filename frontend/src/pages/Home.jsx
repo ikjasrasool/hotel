@@ -1,7 +1,10 @@
 import React from 'react';
 import { Star, Clock, Award, MapPin, Utensils, ThumbsUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import CountUp from 'react-countup';
 
 const Home = ({ setActiveTab }) => {
+  const navigate = useNavigate();
   // Sample special offers data
   const specialOffers = [
     { name: "Masala Dosa", description: "Crispy crepe filled with spiced potato", price: "₹120", discount: "10% off" },
@@ -33,7 +36,7 @@ const Home = ({ setActiveTab }) => {
             </button>
             <button
               className="bg-transparent border-2 border-white hover:bg-white hover:text-red-600 text-white px-8 py-3 rounded-full font-bold transition duration-300"
-              onClick={() => setActiveTab('about')}
+              onClick={() => navigate('/about')}
             >
               Learn More
             </button>
@@ -43,29 +46,37 @@ const Home = ({ setActiveTab }) => {
 
       {/* Restaurant Stats */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="flex flex-col items-center">
-            <Utensils className="text-red-600 mb-2" size={32} />
-            <p className="text-2xl font-bold">50+</p>
-            <p className="text-gray-600">Authentic Dishes</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <Clock className="text-red-600 mb-2" size={32} />
-            <p className="text-2xl font-bold">15 min</p>
-            <p className="text-gray-600">Average Prep Time</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <Award className="text-red-600 mb-2" size={32} />
-            <p className="text-2xl font-bold">4.8/5</p>
-            <p className="text-gray-600">Customer Rating</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <ThumbsUp className="text-red-600 mb-2" size={32} />
-            <p className="text-2xl font-bold">10000+</p>
-            <p className="text-gray-600">Happy Customers</p>
-          </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div className="flex flex-col items-center">
+          <Utensils className="text-red-600 mb-2" size={32} />
+          <p className="text-2xl font-bold">
+            <CountUp end={50} duration={3} />+
+          </p>
+          <p className="text-gray-600">Authentic Dishes</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <Clock className="text-red-600 mb-2" size={32} />
+          <p className="text-2xl font-bold">
+            <CountUp end={15} duration={3} /> min
+          </p>
+          <p className="text-gray-600">Average Prep Time</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <Award className="text-red-600 mb-2" size={32} />
+          <p className="text-2xl font-bold">
+            <CountUp end={4.8} duration={2} decimals={1} />/5
+          </p>
+          <p className="text-gray-600">Customer Rating</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <ThumbsUp className="text-red-600 mb-2" size={32} />
+          <p className="text-2xl font-bold">
+            <CountUp end={10000} duration={3} separator="," />+
+          </p>
+          <p className="text-gray-600">Happy Customers</p>
         </div>
       </div>
+    </div>
 
       {/* Benefits Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -187,13 +198,13 @@ const Home = ({ setActiveTab }) => {
         <div className="flex justify-center space-x-4">
           <button
             className="bg-white text-red-600 hover:bg-gray-200 px-8 py-3 rounded-full font-bold transition duration-300 transform hover:scale-105"
-            onClick={() => setActiveTab('menu')}
+            onClick={() => navigate('/menu')}
           >
             Order Food
           </button>
           <button
             className="bg-transparent border-2 border-white hover:bg-white hover:text-red-600 text-white px-8 py-3 rounded-full font-bold transition duration-300"
-            onClick={() => setActiveTab('contact')}
+            onClick={() => navigate('/contact')}
           >
             Contact Us
           </button>

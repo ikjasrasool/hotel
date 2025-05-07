@@ -1,15 +1,20 @@
 import React from 'react';
 import { MapPin, Phone, Mail, Clock, Award, History, Users, ChefHat, Truck, Globe, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const About = () => {
   // Timeline data for company history
+   const navigate = useNavigate();
   const timeline = [
-    { year: "1981", event: "First Saravana Bhavan restaurant opened in Chennai" },
-    { year: "1992", event: "Expanded to 5 locations across Tamil Nadu" },
-    { year: "2000", event: "First highway restaurant opened to serve bus travelers" },
-    { year: "2008", event: "Introduced pre-ordering system for highway travelers" },
-    { year: "2015", event: "Launched mobile app for seamless pre-ordering" },
-    { year: "2022", event: "Renovated highway locations with expanded facilities" }
+    
+      { year: "2010", event: "Opened the first Saravana Bhavan restaurant in Pallakkapalayam as a small local eatery." },
+      { year: "2014", event: "Expanded the restaurant to accommodate a larger crowd, transforming it into a spacious dining area." },
+      { year: "2017", event: "Upgraded the facility to cater to highway travelers, including buses making stopovers." },
+      { year: "2020", event: "Introduced a pre-ordering system via phone calls for convenient service to highway commuters." },
+      { year: "2022", event: "Opened a new fine-dining branch and began expansion as a franchise brand." },
+      { year: "2025", event: "Launched a dedicated mobile application for online food ordering, taking our services fully digital." }
+    
+    
   ];
 
   // Team data
@@ -294,7 +299,7 @@ const About = () => {
               Contact our business development team to set up a partnership.
             </p>
             <p className="text-gray-700">
-              <span className="font-medium">Contact:</span> Mr. Anand Rao<br />
+              <span className="font-medium">Contact:</span> Mr. Saravanan M<br />
               <span className="font-medium">Phone:</span> +91 98765 43212<br />
               <span className="font-medium">Email:</span> partnerships@saravanabhavan.com
             </p>
@@ -349,7 +354,7 @@ const About = () => {
         </p>
         <div className="flex flex-col md:flex-row justify-center gap-4">
 
-          <button className="bg-transparent border-2 border-white hover:bg-white hover:text-red-700 px-8 py-3 rounded-full font-bold transition duration-300">
+          <button className="bg-transparent border-2 border-white hover:bg-white hover:text-red-700 px-8 py-3 rounded-full font-bold transition duration-300" onClick={() => navigate('/menu')}>
             Browse Menu
           </button>
         </div>

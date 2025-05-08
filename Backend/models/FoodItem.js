@@ -20,17 +20,16 @@ const foodItemSchema = new mongoose.Schema({
     required: true
   },
   preparationTime: {
-    type: Number,
-    required: true,
-    min: 1
+    type: String,
+    required: true
   },
   description: {
     type: String,
     default: ''
   },
-  allergens: {
+  includes: {
     type: String,
-    default: ''
+    default: 'Sambar and Chutney'
   },
   isVegetarian: {
     type: Boolean,
@@ -43,6 +42,25 @@ const foodItemSchema = new mongoose.Schema({
   isPopular: {
     type: Boolean,
     default: false
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    min: 1
+  },
+  ingredients: {
+    type: [String],
+    default: []
+  },
+  nutritionalInfo: {
+    calories: { type: Number },
+    protein: { type: Number },
+    carbohydrates: { type: Number },
+    fat: { type: Number }
+  },
+  availableTime: {
+    start: { type: String },
+    end: { type: String }
   }
 }, { timestamps: true });
 

@@ -27,7 +27,7 @@ const Home = ({ setActiveTab }) => {
           <div className="flex space-x-4">
             <button
               className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-full font-bold transition duration-300 transform hover:scale-105"
-              onClick={() => setActiveTab('menu')}
+              onClick={() => navigate('/menu')}
             >
               Order Now
             </button>

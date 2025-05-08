@@ -100,61 +100,70 @@ const Cart = () => {
     }, 1000);
   };
 
-  // Function to generate PDF
+  // Function to generate PDF with proper alignment
   const generatePDF = () => {
     setIsGeneratingPDF(true);
-    
+
     try {
-      // Create a new PDF document - using A4 format
+      // Create a new PDF document with proper dimensions
       const doc = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4"
       });
-      
+
       // Set document metadata
       doc.setProperties({
         title: 'Hotel Saravana Bhavan Receipt',
         subject: 'Food Order Receipt',
         creator: 'Saravana Bhavan App'
       });
-      
+
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
-      const margin = 20; // margin in mm
-      
-      // Add logo placeholder (since we can't load external images)
-      doc.setFillColor(220, 20, 60); // Crimson red
-      doc.setFillColor(255, 20, 60); doc.rect(pageWidth / 2 - 80, margin, 160, 30, 'F');
+      const margin = 20; // Standard margin
 
-      
-      // Add restaurant name
-      doc.setFontSize(24);
+      // Add decorative border with consistent thickness
+      doc.setDrawColor(220, 20, 60); // Crimson red
+      doc.setLineWidth(1);
+      doc.rect(5, 5, pageWidth - 10, pageHeight - 10);
+
+      // Add header with consistent color and spacing
+      doc.setFillColor(220, 20, 60); // Crimson red for main header
+      doc.rect(0, 0, pageWidth, 35, 'F');
+      doc.setFillColor(180, 10, 30); // Darker red for bottom accent
+      doc.rect(0, 35, pageWidth, 5, 'F');
+
+      // Add restaurant name with proper positioning
+      doc.setFontSize(26);
+      doc.setFont("helvetica", "bold");
+      // Shadow effect with exact positioning
+      doc.setTextColor(180, 10, 30); // Darker red for shadow
+      doc.text("Hotel Saravana Bhavan", pageWidth / 2 + 0.5, 15 + 0.5, { align: "center" });
+      // Main text with exact positioning
       doc.setTextColor(255, 255, 255); // White
-      doc.setFont("helvetica", "bold");
-      doc.text("Hotel Saravana Bhavan", pageWidth / 2, margin + 18, { align: "center" });
-      
-      // Add "VegTables" tagline
-      doc.setFontSize(14);
-      doc.setTextColor(0, 0, 0);
-      doc.setFont("helvetica", "italic");
-      doc.text("VegTables", pageWidth / 2, margin + 40, { align: "center" });
-      
-      // Add receipt title with spacing
-      doc.setFontSize(18);
-      doc.setTextColor(220, 20, 60); // Crimson red
-      doc.setFont("helvetica", "bold");
-      doc.text("FOOD ORDER RECEIPT", pageWidth / 2, margin + 50, { align: "center" });
-      
-      // Add order information with proper spacing
-      const orderInfoY = margin + 60;
-      
+      doc.text("Hotel Saravana Bhavan", pageWidth / 2, 15, { align: "center" });
+
+      // Add tagline with proper spacing
       doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
+      doc.setFont("helvetica", "italic");
+      doc.text("VegTables", pageWidth / 2, 23, { align: "center" });
+
+      // Add receipt title with proper positioning
+      doc.setFontSize(16);
       doc.setFont("helvetica", "bold");
-      doc.text("Order Date:", margin, orderInfoY);
-      doc.setFont("helvetica", "normal");
-      
+      doc.text("FOOD ORDER RECEIPT", pageWidth / 2, 32, { align: "center" });
+
+      // Add order information section with proper spacing and alignment
+      doc.setDrawColor(220, 20, 60); // Crimson red
+      doc.setLineWidth(0.1);
+      doc.setFillColor(252, 245, 245); // Very light red background
+      doc.roundedRect(margin - 5, 45, pageWidth - 2 * (margin - 5), 15, 2, 2, 'FD');
+
+      const orderInfoY = 55;
+      doc.setFontSize(11);
+      doc.setTextColor(0, 0, 0); // Black
+
       // Format order date
       const orderDate = new Date().toLocaleDateString('en-IN', {
         year: 'numeric',
@@ -163,59 +172,97 @@ const Cart = () => {
         hour: '2-digit',
         minute: '2-digit'
       });
-      
-      doc.text(orderDate, margin + 30, orderInfoY);
-      
+
+      // Order details section with two-column layout and exact positioning
       doc.setFont("helvetica", "bold");
-      doc.text("Order ID:", margin, orderInfoY + 8);
+      doc.text("Order Date:", margin, orderInfoY);
       doc.setFont("helvetica", "normal");
-      doc.text(`#${orderDetails.orderCode}`, margin + 30, orderInfoY + 8);
-      
-      // Add a line separator with proper spacing
-      doc.setLineWidth(0.5);
-      doc.setDrawColor(220, 20, 60); // Crimson red
-      doc.line(margin, orderInfoY + 15, pageWidth - margin, orderInfoY + 15);
-      
-      // Add customer information section with better spacing
-      const customerInfoY = orderInfoY + 25;
-      doc.setFontSize(16);
+      doc.text(orderDate, margin + 25, orderInfoY);
+
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(220, 20, 60); // Crimson red
-      doc.text("Customer Information", margin, customerInfoY);
-      
+      const orderIdX = pageWidth - margin - 50;
+      doc.text("Order ID:", orderIdX, orderInfoY);
+      doc.setFont("helvetica", "normal");
+      const orderIdValueX = pageWidth - margin;
+      doc.text(`#${orderDetails.orderCode}`, orderIdValueX, orderInfoY, { align: "right" });
+
+      // Customer Information section with proper spacing and alignment
+      const customerInfoY = orderInfoY + 20;
+
+      // Section title with proper positioning
+      doc.setFillColor(220, 20, 60); // Crimson red
+      doc.roundedRect(margin - 5, customerInfoY - 9, 60, 9, 1, 1, 'F');
       doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      
-      // Create a better formatted customer info section
-      const customerDetailY = customerInfoY + 10;
-      const columnWidth = (pageWidth - (margin * 2)) / 2;
-      
-      // Left column
       doc.setFont("helvetica", "bold");
-      doc.text("Name:", margin, customerDetailY);
-      doc.text("Email:", margin, customerDetailY + 8);
-      
-      // Right column
-      doc.text("Age:", margin + columnWidth, customerDetailY);
-      doc.text("Bus Number:", margin + columnWidth, customerDetailY + 8);
-      
-      // Values - left column
+      doc.setTextColor(255, 255, 255); // White
+      doc.text("Customer Information", margin, customerInfoY - 3);
+
+      // Customer info box with proper spacing and consistent borders
+      doc.setDrawColor(220, 20, 60, 0.5); // Light crimson border
+      doc.setLineWidth(0.3);
+      doc.setFillColor(252, 245, 245); // Very light red background
+      doc.roundedRect(margin - 5, customerInfoY, pageWidth - 2 * (margin - 5), 30, 3, 3, 'FD');
+
+      const customerDetailY = customerInfoY + 12;
+      doc.setFontSize(11);
+      doc.setTextColor(60, 60, 60); // Dark gray for better readability
+
+      // Define columns for customer info with proper spacing and alignment
+      const col1 = margin;
+      const col2 = pageWidth / 2 + 5;
+
+      // Add consistent icons for labels
+      const iconSize = 3;
+      doc.setFillColor(220, 20, 60); // Crimson red
+
+      // Name field with proper alignment
+      doc.circle(col1, customerDetailY - 3, iconSize / 2, 'F');
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(80, 80, 80); // Dark gray
+      doc.text("Name:", col1 + 5, customerDetailY);
       doc.setFont("helvetica", "normal");
-      doc.text(orderDetails.customerName, margin + 25, customerDetailY);
-      doc.text(orderDetails.email, margin + 25, customerDetailY + 8);
-      
-      // Values - right column
-      doc.text(`${orderDetails.age} years`, margin + columnWidth + 25, customerDetailY);
-      doc.text(orderDetails.busNumber, margin + columnWidth + 35, customerDetailY + 8);
-      
-      // Add order items section title with better spacing
-      const orderTitleY = customerDetailY + 20;
-      doc.setFontSize(16);
+      doc.setTextColor(0, 0, 0); // Black for value
+      doc.text(orderDetails.customerName, col1 + 20, customerDetailY);
+
+      // Email field with proper alignment
+      doc.circle(col1, customerDetailY + 10 - 3, iconSize / 2, 'F');
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(220, 20, 60); // Crimson red
-      doc.text("Order Details", margin, orderTitleY);
-      
-      // Setup the table with proper width and styling
+      doc.setTextColor(80, 80, 80); // Dark gray
+      doc.text("Email:", col1 + 5, customerDetailY + 10);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(0, 0, 0); // Black for value
+      doc.text(orderDetails.email, col1 + 20, customerDetailY + 10);
+
+      // Age field with proper alignment
+      doc.circle(col2, customerDetailY - 3, iconSize / 2, 'F');
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(80, 80, 80); // Dark gray
+      doc.text("Age:", col2 + 5, customerDetailY);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(0, 0, 0); // Black for value
+      doc.text(`${orderDetails.age} years`, col2 + 20, customerDetailY);
+
+      // Bus Number field with proper alignment
+      doc.circle(col2, customerDetailY + 10 - 3, iconSize / 2, 'F');
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(80, 80, 80); // Dark gray
+      doc.text("Bus Number:", col2 + 5, customerDetailY + 10);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(0, 0, 0); // Black for value
+      doc.text(orderDetails.busNumber, col2 + 35, customerDetailY + 10);
+
+      // Order Details Section with proper spacing and alignment
+      const orderTitleY = customerInfoY + 40;
+
+      // Section title with proper positioning
+      doc.setFillColor(220, 20, 60); // Crimson red
+      doc.roundedRect(margin - 5, orderTitleY - 9, 40, 9, 1, 1, 'F');
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(255, 255, 255); // White
+      doc.text("Order Details", margin, orderTitleY - 3);
+
+      // Setup table with proper column widths and alignment
       const tableColumn = ["Item", "Qty", "Price (₹)", "Subtotal (₹)"];
       const tableRows = orderDetails.items.map(item => [
         item.name,
@@ -223,86 +270,150 @@ const Cart = () => {
         item.price.toFixed(2),
         (item.price * item.quantity).toFixed(2)
       ]);
-      
+
+      // Generate the table with proper spacing and alignment
+      autoTable(doc, {
+        startY: orderTitleY,
+        head: [tableColumn],
+        body: tableRows,
+        theme: 'grid',
+        headStyles: {
+          fillColor: [220, 20, 60], // Crimson red
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          halign: 'center',
+          fontSize: 12,
+          cellPadding: 6
+        },
+        bodyStyles: {
+          fontSize: 11,
+          lineWidth: 0.3,
+          cellPadding: 5,
+          fontStyle: 'normal',
+          lineColor: [220, 20, 60, 0.3]
+        },
+        alternateRowStyles: {
+          fillColor: [252, 245, 245] // Very light red for alternate rows
+        },
+        columnStyles: {
+          0: { cellWidth: 'auto', halign: 'left', fontStyle: 'normal' },
+          1: { cellWidth: 20, halign: 'center', fontStyle: 'normal' },
+          2: { cellWidth: 35, halign: 'right', fontStyle: 'normal' },
+          3: { cellWidth: 35, halign: 'right', fontStyle: 'normal' }
+        },
+        margin: { left: margin - 5, right: margin - 5 },
+        didDrawPage: function(data) {
+          doc.lastAutoTableEndPosY = data.cursor.y;
+        }
+      });
+
+      // Financial summary section with proper alignment
+      const summaryY = doc.lastAutoTableEndPosY + 15;
+
+      // Add a balanced background for the financial summary with proper positioning
+      doc.setFillColor(252, 245, 245); // Very light red background
+      doc.setDrawColor(220, 20, 60, 0.5); // Light crimson border
+      doc.roundedRect(pageWidth / 2, summaryY - 10, pageWidth / 2 - margin + 5, 40, 3, 3, 'FD');
+
+      // Ensure financial values are right-aligned with consistent spacing
+      const summaryLeftX = pageWidth - margin - 50;
+      const summaryRightX = pageWidth - margin;
+
       // Calculate financial values
       const subtotal = orderDetails.totalAmount;
       const taxRate = 0.05;
       const tax = subtotal * taxRate;
       const finalTotal = subtotal + tax;
-      
-      // Generate the table with more space and better styling
-      autoTable(doc, {
-        startY: orderTitleY + 5,
-        head: [tableColumn],
-        body: tableRows,
-        theme: 'grid',
-        headStyles: { 
-          fillColor: [220, 20, 60], // Crimson red
-          textColor: [255, 255, 255],
-          fontStyle: 'bold',
-          halign: 'center',
-          fontSize: 12
-        },
-        bodyStyles: {
-          textColor: [50, 50, 50],
-          fontSize: 11,
-          lineWidth: 0.5,
-          lineColor: [220, 20, 60, 0.3] // Light crimson for grid lines
-        },
-        columnStyles: {
-          0: { cellWidth: 70 },
-          1: { cellWidth: 20, halign: 'center' },
-          2: { cellWidth: 40, halign: 'right' },
-          3: { cellWidth: 40, halign: 'right' }
-        },
-        margin: { left: margin, right: margin },
-        didDrawPage: function(data) {
-          // Capture the final Y position after table is drawn
-          doc.lastAutoTableEndPosY = data.cursor.y;
-        }
-      });
-      
-      // Calculate the position after the table using the captured Y position
-      let summaryY = doc.lastAutoTableEndPosY + 10;
-      
-      // Add subtotal, tax, and total with better alignment and spacing
-      const summaryLabelX = pageWidth - margin - 70;
-      const summaryValueX = pageWidth - margin - 10;
-      
-      doc.setFontSize(12);
+
+      // Draw financial summary with proper right alignment for values
+      doc.setFontSize(11);
+      doc.setTextColor(80, 80, 80); // Dark gray for labels
+      doc.setFont("helvetica", "bold");
+
+      doc.text("Subtotal:", summaryLeftX, summaryY, { align: "right" });
       doc.setFont("helvetica", "normal");
-      doc.text("Subtotal:", summaryLabelX, summaryY, { align: "right" });
-      doc.text(`₹${subtotal.toFixed(2)}`, summaryValueX, summaryY, { align: "right" });
-      
-      doc.text("Tax (5%):", summaryLabelX, summaryY + 8, { align: "right" });
-      doc.text(`₹${tax.toFixed(2)}`, summaryValueX, summaryY + 8, { align: "right" });
-      
-      // Add a line before the total
-      doc.setLineWidth(0.5);
+      doc.setTextColor(0, 0, 0); // Black for values
+      doc.text(`₹${subtotal.toFixed(2)}`, summaryRightX, summaryY, { align: "right" });
+
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(80, 80, 80); // Dark gray for labels
+      doc.text("Tax (5%):", summaryLeftX, summaryY + 10, { align: "right" });
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(0, 0, 0); // Black for values
+      doc.text(`₹${tax.toFixed(2)}`, summaryRightX, summaryY + 10, { align: "right" });
+
+      // Add a decorative line before the total with proper positioning
       doc.setDrawColor(220, 20, 60); // Crimson red
-      doc.line(summaryLabelX - 30, summaryY + 12, summaryValueX, summaryY + 12);
-      
+      doc.setLineWidth(0.7);
+      doc.line(pageWidth / 2 + 50, summaryY + 15, summaryRightX, summaryY + 15);
+
+      // Total amount with proper alignment and emphasis
+      doc.setFontSize(13);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(220, 20, 60); // Crimson red
-      doc.text("Total Amount:", summaryLabelX, summaryY + 20, { align: "right" });
-      doc.text(`₹${finalTotal.toFixed(2)}`, summaryValueX, summaryY + 20, { align: "right" });
-      
-      // Add footer text with proper spacing
-      const footerY = summaryY + 40;
+      doc.text("Total Amount:", summaryLeftX, summaryY + 25, { align: "right" });
+      doc.text(`₹${finalTotal.toFixed(2)}`, summaryRightX, summaryY + 25, { align: "right" });
+
+      // Add decorative design element with proper positioning
+      const designY = summaryY + 45;
+      doc.setDrawColor(220, 20, 60); // Crimson red
+      doc.setLineWidth(1);
+
+      // Decorative wave-like pattern with consistent spacing
+      let waveX = margin - 5;
+      const waveWidth = 10;
+      const waveCount = Math.floor((pageWidth - 2 * (margin - 5)) / waveWidth);
+
+      doc.setDrawColor(220, 20, 60, 0.6); // Semi-transparent red
+      doc.setLineWidth(1);
+
+      for (let i = 0; i < waveCount; i++) {
+        doc.line(waveX, designY, waveX + waveWidth/2, designY - 3);
+        doc.line(waveX + waveWidth/2, designY - 3, waveX + waveWidth, designY);
+        waveX += waveWidth;
+      }
+
+      // Add footer with proper spacing and alignment
+      const footerY = pageHeight - 35;
+
+      // Footer background with balanced spacing
+      doc.setFillColor(250, 250, 250);
+      doc.setDrawColor(220, 20, 60, 0.3);
+      doc.roundedRect(margin - 5, footerY - 5, pageWidth - 2 * (margin - 5), 30, 3, 3, 'FD');
+
+      // Contact info with centered alignment
       doc.setFontSize(10);
-      doc.setTextColor(100, 100, 100); // Gray color for footer
+      doc.setTextColor(80, 80, 80); // Dark gray
       doc.setFont("helvetica", "normal");
       doc.text("For any questions about your order, please contact us at:", pageWidth / 2, footerY, { align: "center" });
+
+      // Add emphasis to contact details with proper spacing
+      doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
-      doc.text("support@saravanabhavan.com | +91 98765 43210", pageWidth / 2, footerY + 6, { align: "center" });
-      
-      // Add thank you message
-      doc.setFontSize(12);
-      doc.setTextColor(220, 20, 60); // Crimson red
-      doc.setFont("helvetica", "italic");
-      doc.text("Thank you for your business!", pageWidth / 2, footerY + 16, { align: "center" });
-      
-      // Save the PDF
+      doc.setTextColor(220, 20, 60); // Crimson red for contact details
+      doc.text("support@saravanabhavan.com | +91 98765 43210", pageWidth / 2, footerY + 8, { align: "center" });
+
+      // Add thank you message with proper positioning
+      doc.setFontSize(13);
+      doc.setTextColor(180, 10, 30); // Darker red
+      doc.setFont("helvetica", "bolditalic");
+      doc.text("Thank you for your business!", pageWidth / 2, footerY + 20, { align: "center" });
+
+      // Add QR code placeholder with consistent size and positioning
+      doc.setFillColor(80, 80, 80);
+      doc.roundedRect(margin, footerY - 5, 25, 25, 2, 2, 'F');
+      doc.setFontSize(6);
+      doc.setTextColor(255, 255, 255);
+      doc.text("QR Code", margin + 12.5, footerY + 7.5, { align: "center" });
+
+      // Add restaurant logo placeholder with balanced positioning
+      doc.setFillColor(220, 20, 60);
+      doc.roundedRect(pageWidth - margin - 25, footerY - 5, 25, 25, 2, 2, 'F');
+      doc.setFontSize(6);
+      doc.setTextColor(255, 255, 255);
+      doc.text("Logo", pageWidth - margin - 12.5, footerY + 7.5, { align: "center" });
+
+      // Save the PDF with properly formatted name
       doc.save(`SaravanaBhavan_Receipt_${orderDetails.orderCode}.pdf`);
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -382,9 +493,9 @@ const Cart = () => {
             <div className="bg-red-600 text-center p-6 relative">
               {/* Logo container */}
               <div className="mb-2">
-                <img 
-                  src="/path/to/saravana-bhavan-logo.png" 
-                  alt="Hotel Saravana Bhavan" 
+                <img
+                  src="/path/to/saravana-bhavan-logo.png"
+                  alt="Hotel Saravana Bhavan"
                   className="h-16 mx-auto"
                   onError={(e) => {
                     e.target.onerror = null;
@@ -501,7 +612,7 @@ const Cart = () => {
                 </>
               )}
             </button>
-            
+
             <button
               onClick={() => navigate('/menu')}
               className="flex items-center justify-center border-2 border-red-600 text-red-600 px-6 py-3 rounded-lg hover:bg-red-50 transition duration-300 transform hover:scale-105"
@@ -544,7 +655,7 @@ const Cart = () => {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-md p-6 mb-6">
                 <h2 className="text-2xl font-semibold mb-4 text-gray-800">Order Items</h2>
-                
+
                 {/* Cart items list */}
                 <div className="space-y-4">
                   {cartItems.map((item) => (
@@ -560,13 +671,13 @@ const Cart = () => {
                           <div className="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center text-red-500 mr-4 flex-shrink-0">
                             <span className="font-bold">{item.name.charAt(0)}</span>
                           </div>
-                          
+
                           <div>
                             <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
                             <p className="text-sm text-gray-500 mt-1">₹{item.price} per serving</p>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center space-x-6 w-full sm:w-auto">
                           {/* Quantity controls */}
                           <div className="flex items-center">
@@ -577,9 +688,9 @@ const Cart = () => {
                             >
                               <Minus size={16} className="text-gray-600" />
                             </button>
-                            
+
                             <span className="font-medium text-lg mx-3 min-w-[20px] text-center">{item.quantity}</span>
-                            
+
                             <button
                               onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
                               className="w-8 h-8 rounded-full bg-gray-100 hover:bg-red-100 flex items-center justify-center transition-colors duration-200"
@@ -588,12 +699,12 @@ const Cart = () => {
                               <Plus size={16} className="text-gray-600" />
                             </button>
                           </div>
-                          
+
                           {/* Price */}
                           <div className="text-right">
                             <p className="font-bold text-lg text-red-600">₹{(item.price * item.quantity).toFixed(2)}</p>
                           </div>
-                          
+
                           {/* Remove button */}
                           <button
                             onClick={() => handleRemoveItem(item._id)}
@@ -608,7 +719,7 @@ const Cart = () => {
                   ))}
                 </div>
               </div>
-              
+
               {/* Recommended items section */}
               <div className="bg-amber-50 rounded-xl shadow-md p-6 border border-amber-200">
                 <h3 className="text-lg font-semibold text-amber-800 mb-3">Customers Also Enjoyed</h3>
@@ -622,7 +733,7 @@ const Cart = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Checkout form when displayed */}
               {showCheckoutForm && (
                 <div id="checkout-form-section" className="mt-8 bg-white rounded-xl shadow-md p-6 animate-fadeIn">
@@ -645,7 +756,7 @@ const Cart = () => {
                     {totalItems} {totalItems === 1 ? 'item' : 'items'} in your cart
                   </p>
                 </div>
-                
+
                 {/* Summary content */}
                 <div className="p-6">
                   {/* Items summary */}
@@ -663,13 +774,13 @@ const Cart = () => {
                       <span>Free</span>
                     </div>
                   </div>
-                  
+
                   {/* Total amount */}
                   <div className="flex justify-between items-center mb-6">
                     <span className="text-lg font-bold">Total</span>
                     <span className="text-xl font-bold text-red-600">₹{finalTotal.toFixed(2)}</span>
                   </div>
-                  
+
                   {/* Action buttons */}
                   {!showCheckoutForm ? (
                     <button
@@ -688,7 +799,7 @@ const Cart = () => {
                       Back to Cart
                     </button>
                   )}
-                  
+
                   {/* Security badge */}
                   <div className="mt-6 flex items-center justify-center text-gray-500 text-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -697,18 +808,18 @@ const Cart = () => {
                     Secure Checkout
                   </div>
                 </div>
-                
+
                 {/* Promo box */}
                 <div className="bg-gray-50 p-6 border-t border-gray-200">
                   <p className="text-sm font-medium text-gray-700 mb-2">Have a special request?</p>
-                  <textarea 
+                  <textarea
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     placeholder="Add any special instructions here..."
                     rows="2"
                   ></textarea>
                 </div>
               </div>
-              
+
               {/* Help section */}
               <div className="mt-6 bg-white rounded-xl p-6 shadow-md">
                 <h4 className="font-medium text-gray-800 mb-2">Need Help?</h4>

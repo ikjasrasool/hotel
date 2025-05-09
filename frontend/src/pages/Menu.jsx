@@ -19,7 +19,7 @@ const Menu = () => {
   const fetchFoodItems = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/api/food-items');
+      const res = await axios.get('https://hotel-g86y.onrender.com/api/food-items');
       setFoodItems(res.data);
 
       // Set the first category as active by default

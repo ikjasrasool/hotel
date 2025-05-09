@@ -43,7 +43,7 @@ const Additem = () => {
   const fetchFoodItems = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/food-items');
+      const res = await axios.get('https://hotel-g86y.onrender.com/api/food-items');
       setFoodItems(res.data);
       setError(null);
     } catch (err) {
@@ -78,9 +78,9 @@ const Additem = () => {
       };
 
       if (editingItem) {
-        await axios.put(`http://localhost:5000/api/update-food/${editingItem._id}`, payload);
+        await axios.put(`https://hotel-g86y.onrender.com/api/update-food/${editingItem._id}`, payload);
       } else {
-        await axios.post('http://localhost:5000/api/add-food', payload);
+        await axios.post('https://hotel-g86y.onrender.com/api/add-food', payload);
       }
 
       await fetchFoodItems();
@@ -127,7 +127,7 @@ const Additem = () => {
 
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/api/delete-food/${id}`);
+      await axios.delete(`https://hotel-g86y.onrender.com/api/delete-food/${id}`);
       await fetchFoodItems();
     } catch (err) {
       console.error("Failed to delete item:", err);
@@ -687,3 +687,4 @@ const Additem = () => {
 };
 
 export default Additem;
+

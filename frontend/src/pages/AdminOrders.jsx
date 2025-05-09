@@ -48,7 +48,7 @@ const AdminOrders = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/orders/all');
+      const res = await axios.get('https://hotel-g86y.onrender.com/api/orders/all');
       if (res.data.success) {
         setOrders(res.data.orders);
         
@@ -158,7 +158,7 @@ const AdminOrders = () => {
   
     setLoading(true);
     try {
-      const response = await axios.delete(`http://localhost:5000/api/orders/delete/${orderCode}`);
+      const response = await axios.delete(`https://hotel-g86y.onrender.com/api/orders/delete/${orderCode}`);
       
       if (response.data.success) {
         // Only remove from orders (display), not from allOrders (analytics)
@@ -351,7 +351,7 @@ const AdminOrders = () => {
           </div>
         </div>
 
-       {/*
+
   Historical Data Charts
   <div className="bg-white rounded-lg shadow-md p-6 mb-6">
     <div className="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -360,19 +360,19 @@ const AdminOrders = () => {
         Sales Analytics
       </h2>
       <div className="flex items-center mt-4 md:mt-0">
-        <button 
+        <button
           onClick={() => navigateDate(-1)}
           className="p-2 rounded hover:bg-gray-100"
         >
           <ChevronsLeft className="h-5 w-5 text-gray-600" />
         </button>
         <div className="mx-2 text-gray-800 font-medium">
-          {viewMode === 'daily' 
+          {viewMode === 'daily'
             ? formatDisplayDate(selectedDate)
             : `Week of ${formatDisplayDate(selectedDate)}`
           }
         </div>
-        <button 
+        <button
           onClick={() => navigateDate(1)}
           className="p-2 rounded hover:bg-gray-100"
         >
@@ -391,7 +391,7 @@ const AdminOrders = () => {
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Revenue Chart */}
-      {/* <div className="bg-white rounded-lg p-4 border border-gray-200">
+      <div className="bg-white rounded-lg p-4 border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Revenue</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -404,20 +404,20 @@ const AdminOrders = () => {
               <YAxis />
               <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="#10B981" 
-                activeDot={{ r: 8 }} 
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                stroke="#10B981"
+                activeDot={{ r: 8 }}
                 name="Revenue (₹)"
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
-      </div> */}
+      </div>
 
       {/* Orders Count Chart */}
-      {/* <div className="bg-white rounded-lg p-4 border border-gray-200">
+       <div className="bg-white rounded-lg p-4 border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Order Count</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -437,7 +437,7 @@ const AdminOrders = () => {
       </div>
     </div>
   </div>
-*/} 
+
 
 
         {/* Search and Filter Controls */}

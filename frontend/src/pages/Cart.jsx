@@ -318,8 +318,7 @@ const Cart = () => {
     try {
       // For Cash on Delivery
       if (formData.paymentMethod === 'cash') {
-        // Create order directly without Razorpay
-        const response = await axios.post('http://localhost:5000/api/orders/create', {
+        const response = await axios.post('https://hotel-g86y.onrender.com/api/orders/create', {
           customerName: formData.customerName,
           email: formData.email,
           age: formData.age,
@@ -349,7 +348,7 @@ const Cart = () => {
         // Step 1: Create Razorpay order from backend
         const orderAmount = Math.round(finalTotal); // Convert to paise and ensure it's an integer
         
-        const orderResponse = await axios.post('http://localhost:5000/api/payment/create-order', {
+        const orderResponse = await axios.post('https://hotel-g86y.onrender.com/api/payment/create-order', {
           amount: orderAmount,
           currency: 'INR',
           receipt: `receipt_${Date.now()}`
@@ -383,7 +382,7 @@ const Cart = () => {
           handler: async function(response) {
             try {
               // Step 4: Verify payment on backend
-              const verifyResponse = await axios.post('http://localhost:5000/api/payment/verify', {
+              const verifyResponse = await axios.post('https://hotel-g86y.onrender.com/api/payment/verify', {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature
@@ -391,7 +390,7 @@ const Cart = () => {
               
               if (verifyResponse.data.success) {
                 // Step 5: Create order in database after payment verification
-                const createOrderResponse = await axios.post('http://localhost:5000/api/orders/create', {
+                const createOrderResponse = await axios.post('https://hotel-g86y.onrender.com/api/orders/create', {
                   customerName: formData.customerName,
                   email: formData.email,
                   age: formData.age,
@@ -842,6 +841,7 @@ const Cart = () => {
 };
 
 export default Cart;
+
 
 
 

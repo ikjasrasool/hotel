@@ -15,7 +15,7 @@ import AddItem from './pages/AddItem';
 import Cart from './pages/Cart';
 import AdminLogin from './pages/AdminLogin';
 import OpenMapsToHotel from './pages/OpenMapsToHotel';
-import AdminOrders from './components/AdminOrders'; 
+import AdminOrders from './pages/AdminOrders.jsx';
 
 const App = () => {
   return (

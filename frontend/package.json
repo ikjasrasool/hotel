@@ -5,10 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -26,7 +23,6 @@
     "react-countup": "^6.5.3",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.5.0",
-    "react-scripts": "^5.0.1",
     "react-to-print": "^3.1.0",
     "recharts": "^2.15.3"
   },

@@ -1,0 +1,90 @@
+/* printStyles.css */
+
+/* Hide everything except the receipt when printing */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    /* Only show the receipt */
+    .receipt-container, .receipt-container * {
+        visibility: visible;
+    }
+
+    /* Position the receipt at the top of the printed page */
+    .receipt-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    /* Hide buttons and non-essential elements */
+    .no-print, .no-print * {
+        display: none !important;
+    }
+
+    /* Ensure all content fits on the printed page */
+    .receipt-container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none !important;
+    }
+
+    /* Fix any colors that might not print well */
+    .bg-red-600 {
+        background-color: #e53e3e !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .text-white {
+        color: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Page break rules */
+    .receipt-header, .receipt-footer {
+        page-break-inside: avoid;
+    }
+
+    table {
+        page-break-inside: auto;
+    }
+
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+
+    /* Add a page break after the receipt */
+    .receipt-container:after {
+        content: "";
+        display: block;
+        page-break-after: always;
+    }
+
+    /* Adjust font sizes for better printing */
+    h2 {
+        font-size: 24pt !important;
+    }
+
+    h3 {
+        font-size: 20pt !important;
+    }
+
+    h4 {
+        font-size: 16pt !important;
+    }
+
+    p, span, td, th {
+        font-size: 12pt !important;
+    }
+
+    /* Add page margins */
+    @page {
+        margin: 0.5cm;
+    }
+}

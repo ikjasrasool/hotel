@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Additem = () => {
   const [showForm, setShowForm] = useState(false);
@@ -9,6 +10,7 @@ const Additem = () => {
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     image: '',
@@ -217,6 +219,13 @@ const Additem = () => {
                 </svg>
                 Add Food Item
               </button>
+              <button
+                className="bg-purple-600 hover:bg-white-700 text-white px-4 py-2 rounded transition-colors duration-200"
+                onClick={() => navigate('/AdminOrders')}
+              > Orders
+                </button>
+
+
               <button
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors duration-200"
                 onClick={fetchFoodItems}

@@ -7,7 +7,7 @@ const CheckoutForm = ({ onSubmit, isLoading }) => {
     email: '',
     age: '',
     busNumber: '',
-    paymentMethod: 'cash' // Default to cash on delivery
+    paymentMethod: 'online' // Default to cash on delivery
   });
   
   const [errors, setErrors] = useState({});
@@ -263,7 +263,7 @@ const CheckoutForm = ({ onSubmit, isLoading }) => {
 
         {/* Payment method selection */}
         <div className="mt-8">
-          <h3 className="text-lg font-medium text-gray-800 mb-4">Payment Method</h3>
+          <h3 className="text-lg font-medium text-gray-800 mb-4">Payment </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* <div 
               className={`border-2 ${formData.paymentMethod === 'cash' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'} rounded-lg p-4 cursor-pointer relative`}

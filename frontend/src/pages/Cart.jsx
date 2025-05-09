@@ -374,7 +374,7 @@ const Cart = () => {
 
         // Step 3: Configure Razorpay options
         const options = {
-          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          key: 'rzp_test_VqJN3ian5RWA5J',
           amount: razorpayOrder.amount,
           currency: razorpayOrder.currency,
           name: 'Hotel Saravana Bhavan',

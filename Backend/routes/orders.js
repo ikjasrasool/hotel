@@ -74,4 +74,34 @@ router.post('/create', async (req, res) => {
   }
 });
 
+
+router.get('/all', async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 }); // Latest first
+    res.json({ success: true, orders });
+  } catch (error) {
+    console.error('Failed to fetch orders:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch orders' });
+  }
+});
+
+
+router.delete('/delete/:orderCode', async (req, res) => {
+  try {
+    const { orderCode } = req.params;
+
+    // Find and delete the order by orderCode
+    const deletedOrder = await Order.findOneAndDelete({ orderCode });
+
+    if (!deletedOrder) {
+      return res.status(404).json({ success: false, error: 'Order not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Order deleted successfully', deletedOrder });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+});
+
 module.exports = router;

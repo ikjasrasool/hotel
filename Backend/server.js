@@ -7,7 +7,7 @@ const app = express();
 
 const foodRoutes = require('./routes/food');
 const orderRoutes = require('./routes/orders');
-const razorpayRoutes = require('./routes/Razorpay'); // 👈 Razorpay route
+const razorpayRoutes = require('./routes/razorpay'); // 👈 Razorpay route
 
 app.use(cors());
 app.use(express.json());

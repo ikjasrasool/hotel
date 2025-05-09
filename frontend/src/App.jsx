@@ -15,6 +15,7 @@ import AddItem from './pages/AddItem';
 import Cart from './pages/Cart';
 import AdminLogin from './pages/AdminLogin';
 import OpenMapsToHotel from './pages/OpenMapsToHotel';
+import AdminOrders from './components/AdminOrders'; 
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/OpenMapsToHotel" element={<OpenMapsToHotel />} />
+              
             </Route>
 
             {/* Admin Login Route */}
@@ -44,6 +46,7 @@ const App = () => {
               }
             >
               <Route path="/admin" element={<AddItem />} />
+              <Route path="/AdminOrders" element={<AdminOrders />} />
             </Route>
           </Routes>
         </Router>

@@ -24,8 +24,8 @@ const Contact = () => {
   
     if (formData.name && formData.email && formData.message) {
       emailjs.send(
-        service_xytwow7,
-        template_adhrxk9,
+        "service_xytwow7",
+        "template_adhrxk9",
         {
           from_name: formData.name,
           from_email: formData.email,
@@ -33,7 +33,7 @@ const Contact = () => {
           subject: formData.subject,
           message: formData.message,
         },
-        EHG8s9Llg3zAyv977
+        "EHG8s9Llg3zAyv977"
       )
       .then((result) => {
         console.log(result.text);

@@ -103,6 +103,29 @@
     h2 {
         font-size: 1.25rem !important;
     }
+
+    main {
+        padding-bottom: 4rem; /* Height of the bottom navigation */
+    }
+}
+
+/* Mobile Navigation Styles */
+.mobile-nav-enter {
+    transform: translateX(100%);
+}
+
+.mobile-nav-enter-active {
+    transform: translateX(0);
+    transition: transform 300ms ease-in-out;
+}
+
+.mobile-nav-exit {
+    transform: translateX(0);
+}
+
+.mobile-nav-exit-active {
+    transform: translateX(100%);
+    transition: transform 300ms ease-in-out;
 }
 
 /* Mobile-first layout adjustments */

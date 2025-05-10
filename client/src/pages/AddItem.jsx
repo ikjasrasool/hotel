@@ -287,50 +287,67 @@ const Additem = () => {
                 </div>
                 <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {groupedItems[category].map((item) => (
-                    <div key={item._id} className="bg-gray-50 border rounded-lg overflow-hidden shadow-sm transition-all duration-200 hover:shadow-md">
-                      <div className="relative h-48">
+                    <div key={item._id} className="flex bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200">
+                      {/* Left side - Image */}
+                      <div className="w-1/3 relative">
                         <img
                           src={item.image}
                           alt={item.name}
                           className="w-full h-full object-cover"
-                          onError={(e) => {e.target.onerror = null; e.target.src = 'https://via.placeholder.com/300x200?text=Image+Not+Available'}}
+                          style={{ aspectRatio: '1/1' }}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://via.placeholder.com/300x300?text=Image+Not+Available';
+                          }}
                         />
                         {item.isPopular && (
-                          <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">Popular</span>
+                          <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            Popular
+                          </span>
                         )}
                       </div>
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-xl font-bold text-gray-800">{item.name}</h3>
-                          <p className="text-lg font-semibold text-red-700">₹{item.price}</p>
+
+                      {/* Right side - Content */}
+                      <div className="w-2/3 p-4 flex flex-col justify-between">
+                        <div>
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className="text-lg font-bold text-gray-800">{item.name}</h3>
+                            <p className="text-lg font-semibold text-red-700">₹{item.price}</p>
+                          </div>
+
+                          {item.description && (
+                            <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                              {item.description}
+                            </p>
+                          )}
+
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {item.isVegetarian && (
+                              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                                Vegetarian
+                              </span>
+                            )}
+                            {item.isSpicy && (
+                              <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">
+                                Spicy
+                              </span>
+                            )}
+                            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                              {item.preparationTime} min
+                            </span>
+                          </div>
+
+                          {item.includes && (
+                            <p className="text-gray-500 text-xs mb-3">
+                              <span className="font-medium">Includes:</span> {item.includes}
+                            </p>
+                          )}
                         </div>
 
-                        {item.description && (
-                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{item.description}</p>
-                        )}
-
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {item.isVegetarian && (
-                            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Vegetarian</span>
-                          )}
-                          {item.isSpicy && (
-                            <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">Spicy</span>
-                          )}
-                          <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                            {item.preparationTime} min
-                          </span>
-                        </div>
-
-                        {item.allergens && (
-                          <p className="text-gray-500 text-xs mb-3">
-                            <span className="font-medium">SideDish:</span> {item.allergens}
-                          </p>
-                        )}
-
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex gap-2 mt-auto">
                           <button
                             onClick={() => handleEdit(item)}
-                            className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded transition-colors duration-200 flex items-center justify-center"
+                            className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded transition-colors duration-200 flex items-center justify-center text-sm"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -339,7 +356,7 @@ const Additem = () => {
                           </button>
                           <button
                             onClick={() => handleDelete(item._id)}
-                            className="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded transition-colors duration-200 flex items-center justify-center"
+                            className="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded transition-colors duration-200 flex items-center justify-center text-sm"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />

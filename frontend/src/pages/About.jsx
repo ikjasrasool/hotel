@@ -6,22 +6,37 @@ const About = () => {
   // Timeline data for company history
    const navigate = useNavigate();
   const timeline = [
-    
+
       { year: "2010", event: "Opened the first Saravana Bhavan restaurant in Pallakkapalayam as a small local eatery." },
       { year: "2014", event: "Expanded the restaurant to accommodate a larger crowd, transforming it into a spacious dining area." },
       { year: "2017", event: "Upgraded the facility to cater to highway travelers, including buses making stopovers." },
       { year: "2020", event: "Introduced a pre-ordering system via phone calls for convenient service to highway commuters." },
       { year: "2022", event: "Opened a new fine-dining branch and began expansion as a franchise brand." },
       { year: "2025", event: "Launched a dedicated mobile application for online food ordering, taking our services fully digital." }
-    
-    
+
+
   ];
 
   // Team data
   const team = [
-    { name: "Rajesh Kumar", position: "Executive Chef", experience: "25+ years in South Indian cuisine" },
-    { name: "Priya Venkatesh", position: "Operations Manager", experience: "Ensures smooth service during peak hours" },
-    { name: "Anand Rao", position: "Customer Experience Head", experience: "Pioneered our quick service model" }
+    {
+      name: "Rajesh Kumar",
+      position: "Executive Chef",
+      experience: "25+ years in South Indian cuisine",
+      photo: "https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf"
+    },
+    {
+      name: "Priya Venkatesh",
+      position: "Operations Manager",
+      experience: "Ensures smooth service during peak hours",
+      photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2"
+    },
+    {
+      name: "Anand Rao",
+      position: "Customer Experience Head",
+      experience: "Pioneered our quick service model",
+      photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d"
+    }
   ];
 
   // Values data
@@ -135,9 +150,15 @@ const About = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {team.map((member, index) => (
             <div key={index} className="text-center p-4 border rounded-lg hover:shadow-md transition duration-300">
-              <div className="w-24 h-24 mx-auto bg-gray-200 rounded-full mb-4 flex items-center justify-center text-gray-500">
-                {/* Placeholder for team member photo */}
-                Photo
+              <div className="w-24 h-24 mx-auto rounded-full mb-4 overflow-hidden">
+                <img
+                  src={member.photo}
+                  alt={member.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = '/images/team/default-avatar.jpg'; // Fallback image
+                  }}
+                />
               </div>
               <h3 className="font-bold text-lg mb-1">{member.name}</h3>
               <p className="text-red-700 font-medium mb-2">{member.position}</p>
@@ -364,3 +385,4 @@ const About = () => {
 };
 
 export default About;
+

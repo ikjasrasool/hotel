@@ -489,67 +489,103 @@ const AdminOrders = () => {
             <div className="space-y-4">
               {filteredOrders.map((order) => (
                 <div key={order.orderCode} className="bg-white border rounded-lg overflow-hidden shadow-sm transition-all duration-200 hover:shadow-md">
-                  <div 
-                    className="p-4 cursor-pointer"
-                    onClick={() => toggleOrderDetails(order.orderCode)}
-                  >
-                    <div className="flex flex-col md:flex-row justify-between">
-                      <div className="flex flex-col md:flex-row items-start md:items-center mb-2 md:mb-0">
-                        <div className="bg-red-100 text-red-800 font-bold px-3 py-1 rounded-full text-sm mb-2 md:mb-0 md:mr-3">
-                          #{order.orderCode}
+                  <div className="flex flex-col md:flex-row">
+                    {/* Left side - Order details */}
+                    <div className="flex-1 p-4">
+                      <div className="flex flex-col space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center space-x-3">
+                            <div className="bg-red-100 text-red-800 font-bold px-3 py-1 rounded-full text-sm">
+                              #{order.orderCode}
+                            </div>
+                            <div className="flex items-center">
+                              <User className="h-4 w-4 text-gray-500 mr-1" />
+                              <span className="text-gray-800 font-medium">{order.customerName}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center">
+                            <Clock className="h-4 w-4 text-gray-500 mr-1" />
+                            <span className="text-gray-600 text-sm">{formatDate(order.createdAt)}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center">
-                          <User className="h-4 w-4 text-gray-500 mr-1" />
-                          <span className="text-gray-800 font-medium">{order.customerName}</span>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="flex items-center">
+                            <Mail className="h-4 w-4 text-gray-500 mr-1" />
+                            <span className="text-gray-600 text-sm">{order.email}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <Calendar className="h-4 w-4 text-gray-500 mr-1" />
+                            <span className="text-gray-600 text-sm">Age: {order.age}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <Bus className="h-4 w-4 text-gray-500 mr-1" />
+                            <span className="text-gray-600 text-sm">Bus: {order.busNumber}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <TrendingUp className="h-4 w-4 text-gray-500 mr-1" />
+                            <span className="text-gray-700 font-semibold">₹{order.totalAmount.toFixed(2)}</span>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="flex items-center mt-2 md:mt-0">
-                        <Clock className="h-4 w-4 text-gray-500 mr-1" />
-                        <span className="text-gray-600 text-sm">{formatDate(order.createdAt)}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-4 mt-3">
-                      <div className="flex items-center">
-                        <Mail className="h-4 w-4 text-gray-500 mr-1" />
-                        <span className="text-gray-600 text-sm">{order.email}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 text-gray-500 mr-1" />
-                        <span className="text-gray-600 text-sm">Age: {order.age}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Bus className="h-4 w-4 text-gray-500 mr-1" />
-                        <span className="text-gray-600 text-sm">Bus: {order.busNumber}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <TrendingUp className="h-4 w-4 text-gray-500 mr-1" />
-                        <span className="text-gray-700 font-semibold">₹{order.totalAmount.toFixed(2)}</span>
+
+                        <div className="flex justify-between items-center pt-4 border-t">
+                          <button
+                            onClick={() => toggleOrderDetails(order.orderCode)}
+                            className="flex items-center text-blue-500 hover:text-blue-600"
+                          >
+                            <FileText className="h-4 w-4 mr-1" />
+                            <span className="text-sm">
+                              {expandedOrder === order.orderCode ? 'Hide Details' : 'View Details'} ({order.items.length} items)
+                            </span>
+                          </button>
+                          
+                          <button
+                            onClick={() => handleDelete(order.orderCode)}
+                            className="bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-full transition duration-200 flex items-center font-medium shadow-sm hover:shadow"
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Delivered
+                          </button>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex justify-between items-center mt-4">
-                      <div className="flex items-center">
-                        <FileText className="h-4 w-4 text-blue-500 mr-1" />
-                        <span className="text-blue-500 text-sm">
-                          {expandedOrder === order.orderCode ? 'Hide Details' : 'View Details'} ({order.items.length} items)
-                        </span>
+                    {/* Right side - Order items preview */}
+                    <div className="w-full md:w-64 bg-gray-50 p-4 border-t md:border-t-0 md:border-l">
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-gray-700 mb-2">Order Items</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-1 gap-2">
+                          {order.items.slice(0, 3).map((item, index) => (
+                            <div key={index} className="flex items-center space-x-2">
+                              <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
+                                <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="w-full h-full object-cover"
+                                    style={{ aspectRatio: '1/1' }}
+                                    onError={(e) => {
+                                      e.target.onerror = null;
+                                      e.target.src = 'https://via.placeholder.com/300x300?text=Image+Not+Available';
+                                    }}
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
+                                <p className="text-xs text-gray-500">x{item.quantity}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        {order.items.length > 3 && (
+                          <p className="text-xs text-gray-500 text-center">
+                            +{order.items.length - 3} more items
+                          </p>
+                        )}
                       </div>
-                      
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(order.orderCode);
-                        }}
-                        className="bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-full transition duration-200 flex items-center font-medium shadow-sm hover:shadow"
-                      >
-                        <CheckCircle className="h-4 w-4 mr-1" />
-                        Delivered
-                      </button>
                     </div>
                   </div>
-                  
+
+                  {/* Expanded order details section */}
                   {expandedOrder === order.orderCode && (
                     <div className="border-t border-gray-200 bg-gray-50 p-4">
                       <h3 className="font-semibold text-gray-700 mb-2">Order Items</h3>
@@ -575,7 +611,22 @@ const AdminOrders = () => {
                             {order.items.map((item, index) => (
                               <tr key={index}>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-sm text-gray-900">{item.name}</div>
+                                  <div className="flex items-center">
+                                    <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                      <img
+                                        src={item.image || 'https://via.placeholder.com/300x300?text=Image+Not+Available'}
+                                        alt={item.name}
+                                        className="h-full w-full object-cover"
+                                        onError={(e) => {
+                                          e.target.onerror = null;
+                                          e.target.src = 'https://via.placeholder.com/300x300?text=Image+Not+Available';
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="ml-4">
+                                      <div className="text-sm font-medium text-gray-900">{item.name}</div>
+                                    </div>
+                                  </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <div className="text-sm text-gray-900">{item.quantity}</div>
@@ -632,3 +683,4 @@ const AdminOrders = () => {
 };
 
 export default AdminOrders;
+

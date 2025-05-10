@@ -1,184 +1,263 @@
-/* printStyles.css */
-
-/* Base styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Responsive container */
-.container-fluid {
-  width: 100%;
-  padding-right: 0.75rem;
-  padding-left: 0.75rem;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-@media (min-width: 640px) {
+/* Base styles */
+@layer base {
   .container-fluid {
-    padding-right: 1.5rem;
-    padding-left: 1.5rem;
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  @screen sm {
+    .container-fluid {
+      padding-right: 1.5rem;
+      padding-left: 1.5rem;
+    }
   }
 }
 
-/* Responsive grid system */
-.grid-responsive {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-}
+/* Responsive components */
+@layer components {
+  .responsive-container {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+  }
 
-/* Responsive layout utilities */
-.responsive-grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(1, 1fr);
-  padding: 0.5rem;
-}
+  @screen sm {
+    .responsive-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      max-width: 640px;
+    }
+  }
 
-@media (min-width: 640px) {
+  @screen md {
+    .responsive-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 768px;
+    }
+  }
+
+  @screen lg {
+    .responsive-container {
+      max-width: 1024px;
+    }
+  }
+
+  .grid-responsive {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
   .responsive-grid {
-    grid-template-columns: repeat(2, 1fr);
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(1, 1fr);
+    padding: 0.5rem;
+  }
+
+  @screen sm {
+    .responsive-grid {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 1rem;
+    }
+  }
+
+  @screen lg {
+    .responsive-grid {
+      grid-template-columns: repeat(3, 1fr);
+      padding: 1.5rem;
+    }
+  }
+
+  .card-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    z-index: 50;
+    padding: 0.5rem;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    height: auto;
+    min-height: 4rem;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+    width: 100%;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  @screen sm {
+    .table-responsive {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+}
+
+/* Utilities */
+@layer utilities {
+  .text-responsive {
+    font-size: 0.875rem;
+  }
+
+  @screen sm {
+    .text-responsive {
+      font-size: 1rem;
+    }
+  }
+
+  @screen md {
+    .text-responsive {
+      font-size: 1.125rem;
+    }
+  }
+
+  .heading-responsive {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+  @screen sm {
+    .heading-responsive {
+      font-size: 1.5rem;
+    }
+  }
+
+  @screen md {
+    .heading-responsive {
+      font-size: 1.875rem;
+    }
+  }
+
+  .section-padding {
     padding: 1rem;
   }
-}
 
-@media (min-width: 1024px) {
-  .responsive-grid {
-    grid-template-columns: repeat(3, 1fr);
-    padding: 1.5rem;
+  @screen sm {
+    .section-padding {
+      padding: 1.5rem;
+    }
+  }
+
+  @screen md {
+    .section-padding {
+      padding: 2rem;
+    }
+  }
+
+  .chart-container {
+    height: 12rem;
+  }
+
+  @screen sm {
+    .chart-container {
+      height: 16rem;
+    }
+  }
+
+  @screen md {
+    .chart-container {
+      height: 20rem;
+    }
+  }
+
+  .safe-padding {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0) + 1rem);
+  }
+
+  .safe-top {
+    padding-top: calc(env(safe-area-inset-top, 0) + 1rem);
   }
 }
 
-/* Mobile-first responsive text */
-.responsive-text {
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-@media (min-width: 640px) {
-  .responsive-text {
-    font-size: 16px;
-    line-height: 1.7;
-  }
-}
-
-/* Mobile navigation improvements */
-.mobile-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  padding: 0.5rem;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 50;
-  height: auto;
-  min-height: 4rem;
-}
-
-/* Responsive table wrapper */
-.table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 1rem;
-}
-
-/* Safe area padding for modern mobile devices */
-.safe-padding {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.safe-bottom {
-  padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
-}
-
-/* Hide everything except the receipt when printing */
+/* Print styles */
 @media print {
-    body * {
-        visibility: hidden;
-    }
+  body * {
+    visibility: hidden;
+  }
 
-    /* Only show the receipt */
-    .receipt-container, .receipt-container * {
-        visibility: visible;
-    }
+  .receipt-container, .receipt-container * {
+    visibility: visible;
+  }
 
-    /* Position the receipt at the top of the printed page */
-    .receipt-container {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-    }
+  .receipt-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none !important;
+  }
 
-    /* Hide buttons and non-essential elements */
-    .no-print, .no-print * {
-        display: none !important;
-    }
+  .no-print, .no-print * {
+    display: none !important;
+  }
 
-    /* Ensure all content fits on the printed page */
-    .receipt-container {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        box-shadow: none !important;
-    }
+  .bg-red-600 {
+    background-color: #e53e3e !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 
-    /* Fix any colors that might not print well */
-    .bg-red-600 {
-        background-color: #e53e3e !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
+  .text-white {
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 
-    .text-white {
-        color: #ffffff !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
+  .receipt-header, .receipt-footer {
+    page-break-inside: avoid;
+  }
 
-    /* Page break rules */
-    .receipt-header, .receipt-footer {
-        page-break-inside: avoid;
-    }
+  table {
+    page-break-inside: auto;
+  }
 
-    table {
-        page-break-inside: auto;
-    }
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
 
-    tr {
-        page-break-inside: avoid;
-        page-break-after: auto;
-    }
+  .receipt-container:after {
+    content: "";
+    display: block;
+    page-break-after: always;
+  }
 
-    /* Add a page break after the receipt */
-    .receipt-container:after {
-        content: "";
-        display: block;
-        page-break-after: always;
-    }
+  h2 { font-size: 24pt !important; }
+  h3 { font-size: 20pt !important; }
+  h4 { font-size: 16pt !important; }
+  p, span, td, th { font-size: 12pt !important; }
 
-    /* Adjust font sizes for better printing */
-    h2 {
-        font-size: 24pt !important;
-    }
-
-    h3 {
-        font-size: 20pt !important;
-    }
-
-    h4 {
-        font-size: 16pt !important;
-    }
-
-    p, span, td, th {
-        font-size: 12pt !important;
-    }
-
-    /* Add page margins */
-    @page {
-        margin: 0.5cm;
-    }
+  @page {
+    margin: 0.5cm;
+  }
 }
-

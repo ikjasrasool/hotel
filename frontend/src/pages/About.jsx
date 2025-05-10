@@ -1,7 +1,6 @@
 import React from 'react';
 import { MapPin, Phone, Mail, Clock, Award, History, Users, ChefHat, Truck, Globe, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
 const About = () => {
   // Timeline data for company history
    const navigate = useNavigate();
@@ -59,34 +58,35 @@ const About = () => {
         </div>
       </div>
 
-      {/* Introduction Section */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-        <div className="md:flex">
-          <div className="md:w-1/2 bg-gray-200 h-64 md:h-auto relative">
-            {/* This would be an image in a real implementation */}
-            <div className="absolute inset-0 flex items-center justify-center text-gray-500 font-bold">
-              Restaurant Image
+      
+        <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+          <div className="md:flex">
+            <div className="md:w-1/2 bg-gray-200 h-64 md:h-auto relative">
+          <img
+            src="/hotel%20img.jpeg"
+            alt="Exterior view of Saravana Bhavan Highway Restaurant with a welcoming ambiance"
+            className="w-full h-full object-cover"
+          />
+            </div>
+            <div className="md:w-1/2 p-8">
+          <h2 className="text-2xl font-bold mb-4 text-red-700">Welcome to Saravana Bhavan Highway Restaurant</h2>
+          <p className="mb-4 text-gray-700 leading-relaxed">
+            We understand the challenges faced by bus travelers during short food breaks. With just 10-15 minutes to spare,
+            getting food quickly becomes a stressful race against time.
+          </p>
+          <p className="mb-4 text-gray-700 leading-relaxed">
+            That's why we created Saravana Bhavan - a revolutionary pre-ordering system that allows you to browse our menu,
+            place your order, and pay online before your bus even arrives at our location.
+          </p>
+          <p className="text-gray-700 leading-relaxed">
+            When your bus stops at our restaurant, simply show your order code at our dedicated pickup counter, collect your freshly prepared food,
+            and enjoy your meal without the rush or worry of missing your bus.
+          </p>
             </div>
           </div>
-          <div className="md:w-1/2 p-8">
-            <h2 className="text-2xl font-bold mb-4 text-red-700">Welcome to Saravana Bhavan Highway Restaurant</h2>
-            <p className="mb-4 text-gray-700 leading-relaxed">
-              We understand the challenges faced by bus travelers during short food breaks. With just 10-15 minutes to spare,
-              getting food quickly becomes a stressful race against time.
-            </p>
-            <p className="mb-4 text-gray-700 leading-relaxed">
-              That's why we created Saravana Bhavan - a revolutionary pre-ordering system that allows you to browse our menu,
-              place your order, and pay online before your bus even arrives at our location.
-            </p>
-            <p className="text-gray-700 leading-relaxed">
-              When your bus stops at our restaurant, simply show your order code at our dedicated pickup counter, collect your freshly prepared food,
-              and enjoy your meal without the rush or worry of missing your bus.
-            </p>
-          </div>
         </div>
-      </div>
 
-      {/* Our Mission Section */}
+        {/* Our Mission Section */}
       <div className="bg-white rounded-lg shadow-md p-8 mb-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-4 text-red-700">Our Mission</h2>

@@ -220,13 +220,6 @@ const Additem = () => {
                 Add Food Item
               </button>
               <button
-                className="bg-purple-600 hover:bg-white-700 text-white px-4 py-2 rounded transition-colors duration-200"
-                onClick={() => navigate('/AdminOrders')}
-              > Orders
-                </button>
-
-
-              <button
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors duration-200"
                 onClick={fetchFoodItems}
               >

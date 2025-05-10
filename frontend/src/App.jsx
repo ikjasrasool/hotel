@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import './app.css';
 import UserLayout from './layouts/UserLayout';
@@ -14,24 +13,23 @@ import OpenMapsToHotel from './pages/OpenMapsToHotel';
 
 const App = () => {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
-          <Routes>
-            {/* User Routes */}
-            <Route element={<UserLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/menu" element={<MenuPage />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/OpenMapsToHotel" element={<OpenMapsToHotel />} />
-            </Route>
-          </Routes>
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+    <CartProvider>
+      <Router>
+        <Routes>
+          {/* User Routes */}
+          <Route element={<UserLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/OpenMapsToHotel" element={<OpenMapsToHotel />} />
+          </Route>
+        </Routes>
+      </Router>
+    </CartProvider>
   );
 };
 
 export default App;
+

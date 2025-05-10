@@ -6,31 +6,36 @@ const MobileNavigation = () => {
   const activeTab = location.pathname;
 
   return (
-    <div className="md:hidden flex justify-between bg-white border-t p-4 text-sm">
-      <Link
-        to="/"
-        className={`${activeTab === '/' ? 'text-red-600' : 'text-gray-600'}`}
-      >
-        Home
-      </Link>
-      <Link
-        to="/menu"
-        className={`${activeTab === '/menu' ? 'text-red-600' : 'text-gray-600'}`}
-      >
-        Menu
-      </Link>
-      <Link
-        to="/about"
-        className={`${activeTab === '/about' ? 'text-red-600' : 'text-gray-600'}`}
-      >
-        About
-      </Link>
-      <Link
-        to="/contact"
-        className={`${activeTab === '/contact' ? 'text-red-600' : 'text-gray-600'}`}
-      >
-        Contact
-      </Link>
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t safe-padding z-50">
+      <div className="grid grid-cols-2 gap-2 p-2">
+        <Link
+          to="/admin"
+          className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors touch-target ${
+            activeTab === '/admin' 
+              ? 'bg-red-50 text-red-600' 
+              : 'text-gray-600 hover:bg-gray-50 active:bg-gray-100'
+          }`}
+        >
+          <svg className="w-7 h-7 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          <span className="text-xs font-medium">Menu Items</span>
+        </Link>
+        
+        <Link
+          to="/AdminOrders"
+          className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors touch-target ${
+            activeTab === '/AdminOrders'
+              ? 'bg-red-50 text-red-600'
+              : 'text-gray-600 hover:bg-gray-50 active:bg-gray-100'
+          }`}
+        >
+          <svg className="w-7 h-7 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <span className="text-xs font-medium">Orders</span>
+        </Link>
+      </div>
     </div>
   );
 };

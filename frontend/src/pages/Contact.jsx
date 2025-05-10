@@ -24,8 +24,8 @@ const Contact = () => {
   
     if (formData.name && formData.email && formData.message) {
       emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        service_xytwow7,
+        template_adhrxk9,
         {
           from_name: formData.name,
           from_email: formData.email,
@@ -33,7 +33,7 @@ const Contact = () => {
           subject: formData.subject,
           message: formData.message,
         },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        EHG8s9Llg3zAyv977
       )
       .then((result) => {
         console.log(result.text);

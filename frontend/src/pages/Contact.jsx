@@ -150,7 +150,6 @@ const Contact = () => {
               <div className="ml-4">
                 <h3 className="font-bold text-lg mb-1">Hours</h3>
                 <p className="text-gray-700">Restaurant: Open 24/7 for highway travelers</p>
-                <p className="text-gray-700">Administrative Office: 9:00 AM - 6:00 PM (Mon-Sat)</p>
               </div>
             </div>
           </div>
@@ -393,12 +392,10 @@ const Contact = () => {
               <h4 className="font-bold mb-2">Contact Our Partnership Team</h4>
               <p className="text-gray-700 mb-4">
                 Email: <span className="font-medium">partnerships@saravanabhavan.com</span><br />
-                Phone: <span className="font-medium">+91 98765 43212</span><br />
-                Contact Person: <span className="font-medium">Mr. Anand Rao, Business Development Manager</span>
+                Contact Person: <span className="font-medium">Pradeep</span>
               </p>
-              <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
-                Request Partnership Information
-              </button>
+             
+             
             </div>
           </div>
 
@@ -406,8 +403,10 @@ const Contact = () => {
             <div className="bg-red-50 p-6 rounded-lg border border-red-100">
               <h3 className="text-lg font-bold mb-4 text-red-700">Success Story</h3>
               <div className="mb-4 h-40 bg-gray-200 rounded flex items-center justify-center text-gray-500">
-                [Partner Image]
+                <img src="https://t4.ftcdn.net/jpg/00/33/37/83/360_F_33378356_gbnqycEE7TWnxa8Og49mkTn6ISTjxjVT.jpg" alt="" />
               </div>
+              <br />
+              <br />
               <blockquote className="italic text-gray-700 mb-4">
                 "Partnering with Saravana Bhavan has improved our passengers' travel experience significantly. The pre-ordering system saves precious break time, and our customers love the food quality."
               </blockquote>
@@ -440,9 +439,7 @@ const Contact = () => {
 
         <div className="mt-6 text-center">
           <p className="text-gray-700 mb-4">Don't see your question here? Contact us directly!</p>
-          <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-6 rounded-lg transition duration-300">
-            View All FAQs
-          </button>
+    
         </div>
       </div>
 

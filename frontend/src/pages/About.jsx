@@ -19,22 +19,22 @@ const About = () => {
   // Team data
   const team = [
     {
-      name: "Rajesh Kumar",
-      position: "Executive Chef",
-      experience: "25+ years in South Indian cuisine",
-      photo: "https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf"
+      name: "Ramasamy",
+      position: "Head Manager",
+      experience: "Our experienced hotel manager who oversees orders, tracks customer requests, and ensures smooth kitchen and delivery operations.",
+      photo: "https://i.pinimg.com/736x/bc/cb/8a/bccb8aab2f940bb44c2ad01b28aff2f1.jpg"
     },
     {
-      name: "Priya Venkatesh",
-      position: "Operations Manager",
-      experience: "Ensures smooth service during peak hours",
-      photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2"
+      name: "Pradeep",
+      position: "Bus Trips Coordinator ",
+      experience: "Coordinates with bus staff to manage timely food orders and deliveries for passengers during halts.",
+      photo: "https://static.vecteezy.com/system/resources/thumbnails/049/174/246/small_2x/a-smiling-young-indian-man-with-formal-shirts-outdoors-photo.jpg"
     },
     {
-      name: "Anand Rao",
-      position: "Customer Experience Head",
-      experience: "Pioneered our quick service model",
-      photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d"
+      name: "Madhan",
+      position: "Passenger Executive",
+      experience: " Oversees passenger meal preferences and ensures quick, accurate order handling during bus stopovers.",
+      photo: "https://thumbs.dreamstime.com/b/portrait-young-indian-male-smiling-pondichery-puducherry-tamil-nadu-india-september-circa-unidentified-poor-front-121483466.jpg"
     }
   ];
 

@@ -14,9 +14,9 @@ const Home = ({ setActiveTab }) => {
 
   // Sample testimonials data
   const testimonials = [
-    { name: "Raj Kumar", comment: "The best South Indian food I've had during my travels. Quick service is perfect for bus breaks!", rating: 5 },
-    { name: "Priya Singh", comment: "Pre-ordering saved us so much time. The food was hot and ready when we arrived.", rating: 5 },
-    { name: "Michael Chen", comment: "Authentic flavors and excellent service. Will definitely order again!", rating: 4 }
+    { name: "Mohan", comment: "The best South Indian food I've had during my travels. Quick service is perfect for bus breaks!", rating: 5 },
+    { name: "Ramkumar", comment: "Pre-ordering saved us so much time. The food was hot and ready when we arrived.", rating: 5 },
+    { name: "Dinesh", comment: "Authentic flavors and excellent service. Will definitely order again!", rating: 4 }
   ];
 
   return (

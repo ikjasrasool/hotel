@@ -14,9 +14,9 @@ const MobileNavigation = () => {
     { path: '/', label: 'Home', icon: '🏠' },
     { path: '/menu', label: 'Menu', icon: '📖' },
     { path: '/about', label: 'About', icon: 'ℹ️' },
+    { path: '/cart', label: 'Cart', icon: '🛒', badge: totalItems },
     { path: '/contact', label: 'Contact', icon: '📞' },
     { path: '/OpenMapsToHotel', label: 'Location', icon: '📍' },
-    { path: '/cart', label: 'Cart', icon: '🛒', badge: totalItems }
   ];
 
   return (

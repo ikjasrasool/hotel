@@ -155,22 +155,22 @@ const AdminOrders = () => {
 
   const handleDelete = async (orderCode) => {
     if (!window.confirm('Are you sure you want to mark this order as delivered?')) return;
-  
+
     setLoading(true);
     try {
       const response = await axios.delete(`https://hotel-g86y.onrender.com/api/orders/delete/${orderCode}`);
-      
+
       if (response.data.success) {
         // Only remove from orders (display), not from allOrders (analytics)
         setOrders(orders.filter(order => order.orderCode !== orderCode));
-        
+
         // Mark as completed in allOrders instead of removing
-        setAllOrders(allOrders.map(order => 
-          order.orderCode === orderCode 
-            ? { ...order, status: 'completed' } 
+        setAllOrders(allOrders.map(order =>
+          order.orderCode === orderCode
+            ? { ...order, status: 'completed' }
             : order
         ));
-        
+
         setError(null);
       } else {
         setError("Failed to mark order as delivered. Please try again.");
@@ -217,32 +217,32 @@ const AdminOrders = () => {
   // Calculate statistics for today only
   const calculateTodayStats = () => {
     const today = new Date().toISOString().split('T')[0];
-    
+
     const todayOrders = allOrders.filter(order => {
       const orderDate = new Date(order.createdAt).toISOString().split('T')[0];
       return orderDate === today;
     });
-    
+
     const totalRevenue = todayOrders.reduce((total, order) => total + order.totalAmount, 0);
     const totalOrderCount = todayOrders.length;
     const avgOrderValue = totalOrderCount > 0 ? totalRevenue / totalOrderCount : 0;
-    
+
     return {
       totalRevenue,
       totalOrderCount,
       avgOrderValue
     };
   };
-  
+
   const todayStats = calculateTodayStats();
 
   // Format date
   const formatDate = (dateString) => {
-    const options = { 
-      year: 'numeric', 
-      month: 'short', 
+    const options = {
+      year: 'numeric',
+      month: 'short',
       day: 'numeric',
-      hour: '2-digit', 
+      hour: '2-digit',
       minute: '2-digit'
     };
     return new Date(dateString).toLocaleDateString('en-IN', options);
@@ -250,9 +250,9 @@ const AdminOrders = () => {
 
   // Format date for display
   const formatDisplayDate = (date) => {
-    const options = { 
-      year: 'numeric', 
-      month: 'long', 
+    const options = {
+      year: 'numeric',
+      month: 'long',
       day: 'numeric'
     };
     return date.toLocaleDateString('en-IN', options);
@@ -280,10 +280,10 @@ const AdminOrders = () => {
       // Get data for the selected week
       const startOfWeek = new Date(selectedDate);
       startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay());
-      
+
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 6);
-      
+
       return historicalStats.filter(day => {
         const dayDate = new Date(day.date);
         return dayDate >= startOfWeek && dayDate <= endOfWeek;
@@ -352,91 +352,91 @@ const AdminOrders = () => {
         </div>
 
 
-  Historical Data Charts
-  <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-    <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-      <h2 className="text-xl font-bold text-gray-800 flex items-center">
-        <BarChart2 className="h-5 w-5 mr-2 text-red-600" />
-        Sales Analytics
-      </h2>
-      <div className="flex items-center mt-4 md:mt-0">
-        <button
-          onClick={() => navigateDate(-1)}
-          className="p-2 rounded hover:bg-gray-100"
-        >
-          <ChevronsLeft className="h-5 w-5 text-gray-600" />
-        </button>
-        <div className="mx-2 text-gray-800 font-medium">
-          {viewMode === 'daily'
-            ? formatDisplayDate(selectedDate)
-            : `Week of ${formatDisplayDate(selectedDate)}`
-          }
-        </div>
-        <button
-          onClick={() => navigateDate(1)}
-          className="p-2 rounded hover:bg-gray-100"
-        >
-          <ChevronsRight className="h-5 w-5 text-gray-600" />
-        </button>
-        <select
-          className="ml-4 border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-red-500"
-          value={viewMode}
-          onChange={(e) => setViewMode(e.target.value)}
-        >
-          <option value="daily">Daily View</option>
-          <option value="weekly">Weekly View</option>
-        </select>
-      </div>
-    </div>
+  {/*Historical Data Charts*/}
+  {/*<div className="bg-white rounded-lg shadow-md p-6 mb-6">*/}
+  {/*  <div className="flex flex-col md:flex-row justify-between items-center mb-6">*/}
+  {/*    <h2 className="text-xl font-bold text-gray-800 flex items-center">*/}
+  {/*      <BarChart2 className="h-5 w-5 mr-2 text-red-600" />*/}
+  {/*      Sales Analytics*/}
+  {/*    </h2>*/}
+  {/*    <div className="flex items-center mt-4 md:mt-0">*/}
+  {/*      <button*/}
+  {/*        onClick={() => navigateDate(-1)}*/}
+  {/*        className="p-2 rounded hover:bg-gray-100"*/}
+  {/*      >*/}
+  {/*        <ChevronsLeft className="h-5 w-5 text-gray-600" />*/}
+  {/*      </button>*/}
+  {/*      <div className="mx-2 text-gray-800 font-medium">*/}
+  {/*        {viewMode === 'daily'*/}
+  {/*          ? formatDisplayDate(selectedDate)*/}
+  {/*          : `Week of ${formatDisplayDate(selectedDate)}`*/}
+  {/*        }*/}
+  {/*      </div>*/}
+  {/*      <button*/}
+  {/*        onClick={() => navigateDate(1)}*/}
+  {/*        className="p-2 rounded hover:bg-gray-100"*/}
+  {/*      >*/}
+  {/*        <ChevronsRight className="h-5 w-5 text-gray-600" />*/}
+  {/*      </button>*/}
+  {/*      <select*/}
+  {/*        className="ml-4 border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-red-500"*/}
+  {/*        value={viewMode}*/}
+  {/*        onChange={(e) => setViewMode(e.target.value)}*/}
+  {/*      >*/}
+  {/*        <option value="daily">Daily View</option>*/}
+  {/*        <option value="weekly">Weekly View</option>*/}
+  {/*      </select>*/}
+  {/*    </div>*/}
+  {/*  </div>*/}
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Revenue Chart */}
-      <div className="bg-white rounded-lg p-4 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Revenue</h3>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="revenue"
-                stroke="#10B981"
-                activeDot={{ r: 8 }}
-                name="Revenue (₹)"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+  {/*  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">*/}
+  {/*     Revenue Chart */}
+  {/*    <div className="bg-white rounded-lg p-4 border border-gray-200">*/}
+  {/*      <h3 className="text-lg font-semibold text-gray-800 mb-4">Revenue</h3>*/}
+  {/*      <div className="h-64">*/}
+  {/*        <ResponsiveContainer width="100%" height="100%">*/}
+  {/*          <LineChart*/}
+  {/*            data={chartData}*/}
+  {/*            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}*/}
+  {/*          >*/}
+  {/*            <CartesianGrid strokeDasharray="3 3" />*/}
+  {/*            <XAxis dataKey="date" />*/}
+  {/*            <YAxis />*/}
+  {/*            <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />*/}
+  {/*            <Legend />*/}
+  {/*            <Line*/}
+  {/*              type="monotone"*/}
+  {/*              dataKey="revenue"*/}
+  {/*              stroke="#10B981"*/}
+  {/*              activeDot={{ r: 8 }}*/}
+  {/*              name="Revenue (₹)"*/}
+  {/*            />*/}
+  {/*          </LineChart>*/}
+  {/*        </ResponsiveContainer>*/}
+  {/*      </div>*/}
+  {/*    </div>*/}
 
-      {/* Orders Count Chart */}
-       <div className="bg-white rounded-lg p-4 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Order Count</h3>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="orders" fill="#3B82F6" name="Orders" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </div>
-  </div>
+  {/*    /!* Orders Count Chart *!/*/}
+  {/*     <div className="bg-white rounded-lg p-4 border border-gray-200">*/}
+  {/*      <h3 className="text-lg font-semibold text-gray-800 mb-4">Order Count</h3>*/}
+  {/*      <div className="h-64">*/}
+  {/*        <ResponsiveContainer width="100%" height="100%">*/}
+  {/*          <BarChart*/}
+  {/*            data={chartData}*/}
+  {/*            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}*/}
+  {/*          >*/}
+  {/*            <CartesianGrid strokeDasharray="3 3" />*/}
+  {/*            <XAxis dataKey="date" />*/}
+  {/*            <YAxis />*/}
+  {/*            <Tooltip />*/}
+  {/*            <Legend />*/}
+  {/*            <Bar dataKey="orders" fill="#3B82F6" name="Orders" />*/}
+  {/*          </BarChart>*/}
+  {/*        </ResponsiveContainer>*/}
+  {/*      </div>*/}
+  {/*    </div>*/}
+  {/*  </div>*/}
+  {/*</div>*/}
 
 
 
@@ -459,20 +459,7 @@ const AdminOrders = () => {
                 />
               </div>
             </div>
-            <div className="w-full md:w-72">
-              <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700 mb-1">Filter by Status</label>
-              <select
-                id="status-filter"
-                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              >
-                <option value="all">All Orders</option>
-                <option value="pending">Pending</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
+
           </div>
 
           {/* Orders List */}
@@ -538,7 +525,7 @@ const AdminOrders = () => {
                               {expandedOrder === order.orderCode ? 'Hide Details' : 'View Details'} ({order.items.length} items)
                             </span>
                           </button>
-                          
+
                           <button
                             onClick={() => handleDelete(order.orderCode)}
                             className="bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-full transition duration-200 flex items-center font-medium shadow-sm hover:shadow"
@@ -557,17 +544,8 @@ const AdminOrders = () => {
                         <div className="grid grid-cols-2 md:grid-cols-1 gap-2">
                           {order.items.slice(0, 3).map((item, index) => (
                             <div key={index} className="flex items-center space-x-2">
-                              <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
-                                <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="w-full h-full object-cover"
-                                    style={{ aspectRatio: '1/1' }}
-                                    onError={(e) => {
-                                      e.target.onerror = null;
-                                      e.target.src = 'https://via.placeholder.com/300x300?text=Image+Not+Available';
-                                    }}
-                                />
+                              <div className="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center text-red-500 mr-4 flex-shrink-0">
+                                <span className="font-bold">{item.name.charAt(0)}</span>
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
@@ -612,16 +590,8 @@ const AdminOrders = () => {
                               <tr key={index}>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <div className="flex items-center">
-                                    <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                      <img
-                                        src={item.image || 'https://via.placeholder.com/300x300?text=Image+Not+Available'}
-                                        alt={item.name}
-                                        className="h-full w-full object-cover"
-                                        onError={(e) => {
-                                          e.target.onerror = null;
-                                          e.target.src = 'https://via.placeholder.com/300x300?text=Image+Not+Available';
-                                        }}
-                                      />
+                                    <div className="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center text-red-500 mr-4 flex-shrink-0">
+                                      <span className="font-bold">{item.name.charAt(0)}</span>
                                     </div>
                                     <div className="ml-4">
                                       <div className="text-sm font-medium text-gray-900">{item.name}</div>

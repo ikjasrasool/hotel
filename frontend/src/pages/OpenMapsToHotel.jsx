@@ -155,32 +155,7 @@ const SaravanaDistanceCalculator = () => {
   return (
       <div className="max-w-4xl mx-auto">
         {/* Hero section */}
-        <div className="bg-gradient-to-r from-red-600 to-red-800 rounded-t-xl text-white shadow-lg overflow-hidden">
-          <div className="p-6 md:p-8">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold flex items-center">
-                  <Utensils className="mr-2" /> {hotelName}
-                </h1>
-                <div className="flex items-center mt-1">
-                  <MapPin size={16} className="mr-1" />
-                  <p className="text-white/90">{hotelAddress}</p>
-                  <div className="bg-white/20 rounded-full px-3 py-1 text-xs font-medium ml-2">
-                    Open 24/7
-                  </div>
-                </div>
-                <div className="flex items-center mt-2">
-                  <Navigation size={16} className="mr-1" />
-                  <p className="text-white/90">45km from Salem, near Sankari Junction</p>
-                </div>
-              </div>
-              <div className="bg-white text-red-800 rounded-lg p-3 flex items-center shadow-lg mt-4 md:mt-0">
-                <Star fill="gold" color="gold" className="mr-1" />
-                <span className="font-bold text-xl">4.7/5</span>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {/* Distance calculator card */}
         <div className="bg-white rounded-b-xl shadow-lg overflow-hidden border-t-4 border-red-600">

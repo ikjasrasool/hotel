@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Navigation, Clock, Bus, AlertCircle, Info, Utensils, ChevronDown, ChevronUp, Coffee, Star } from 'lucide-react';
+import { MapPin, Navigation, Clock, Bus, AlertCircle, Info, Coffee, ChevronDown, ChevronUp, Car } from 'lucide-react';
 
 const SaravanaDistanceCalculator = () => {
   const [loading, setLoading] = useState(false);
@@ -9,6 +9,7 @@ const SaravanaDistanceCalculator = () => {
   const [duration, setDuration] = useState(null);
   const [nearestBusRoutes, setNearestBusRoutes] = useState([]);
   const [expandedRoute, setExpandedRoute] = useState(null);
+  const [selectedRoute, setSelectedRoute] = useState('highway'); // 'highway' or 'local'
 
   const hotelName = "Saravana Bhavan Hotel";
   const hotelAddress = "National Highway 44, Salem-Coimbatore Highway, Tamil Nadu";
@@ -24,7 +25,8 @@ const SaravanaDistanceCalculator = () => {
       operatingHours: "5:45 AM - 9:25 PM",
       frequency: "Every 90 minutes",
       busType: "Super Deluxe",
-      nextDepartures: ["10:45 AM", "12:30 PM", "2:15 PM"]
+      nextDepartures: ["10:45 AM", "12:30 PM", "2:15 PM"],
+      avgSpeed: 45 // km/h
     },
     {
       routeNumber: "72B",
@@ -32,7 +34,8 @@ const SaravanaDistanceCalculator = () => {
       operatingHours: "6:30 AM - 8:40 PM",
       frequency: "Every 2 hours",
       busType: "Deluxe",
-      nextDepartures: ["12:30 PM", "2:30 PM", "4:30 PM"]
+      nextDepartures: ["12:30 PM", "2:30 PM", "4:30 PM"],
+      avgSpeed: 40 // km/h
     },
     {
       routeNumber: "88C",
@@ -40,7 +43,8 @@ const SaravanaDistanceCalculator = () => {
       operatingHours: "6:00 AM - 9:10 PM",
       frequency: "Every 90 minutes",
       busType: "Regular",
-      nextDepartures: ["11:30 AM", "1:00 PM", "2:30 PM"]
+      nextDepartures: ["11:30 AM", "1:00 PM", "2:30 PM"],
+      avgSpeed: 35 // km/h
     },
     {
       routeNumber: "SRS-01",
@@ -48,23 +52,68 @@ const SaravanaDistanceCalculator = () => {
       operatingHours: "6:45 AM - 11:40 PM",
       frequency: "6 services daily",
       busType: "AC Sleeper",
-      nextDepartures: ["1:15 PM", "4:30 PM", "8:45 PM"]
+      nextDepartures: ["1:15 PM", "4:30 PM", "8:45 PM"],
+      avgSpeed: 50 // km/h
     }
   ];
 
+  // Updated with more realistic travel times reflecting actual road conditions
   const cityDistances = [
-    { from: "Salem", to: "Saravana Bhavan", distance: "45 km", drivingTime: "50 mins" },
-    { from: "Saravana Bhavan", to: "Sankari", distance: "3 km", drivingTime: "5 mins" },
-    { from: "Saravana Bhavan", to: "Bhavani", distance: "38 km", drivingTime: "45 mins" },
-    { from: "Saravana Bhavan", to: "Erode", distance: "56 km", drivingTime: "1 hr 5 mins" },
-    { from: "Saravana Bhavan", to: "Tiruppur", distance: "84 km", drivingTime: "1 hr 45 mins" },
-    { from: "Saravana Bhavan", to: "Coimbatore", distance: "111 km", drivingTime: "2 hr 15 mins" }
+    { from: "Salem", to: "Saravana Bhavan", distance: "45 km", drivingTime: "1 hr 10 mins" },
+    { from: "Saravana Bhavan", to: "Sankari", distance: "3 km", drivingTime: "8 mins" },
+    { from: "Saravana Bhavan", to: "Bhavani", distance: "38 km", drivingTime: "55 mins" },
+    { from: "Saravana Bhavan", to: "Erode", distance: "56 km", drivingTime: "1 hr 25 mins" },
+    { from: "Saravana Bhavan", to: "Tiruppur", distance: "84 km", drivingTime: "2 hr 10 mins" },
+    { from: "Saravana Bhavan", to: "Coimbatore", distance: "121 km", drivingTime: "3 hr 00 mins" }
   ];
+
+  // Different travel speeds based on road types
+  const travelSpeeds = {
+    highway: {
+      clear: 70, // km/h on clear highways
+      normal: 55, // km/h on normal traffic
+      heavy: 40  // km/h on heavy traffic
+    },
+    local: {
+      clear: 45, // km/h on clear local roads
+      normal: 35, // km/h on normal traffic local roads
+      heavy: 25  // km/h on heavy traffic local roads
+    }
+  };
+
+  // Different traffic conditions based on time of day
+  const getTrafficCondition = () => {
+    const hour = new Date().getHours();
+
+    // Morning rush hours (7-10 AM)
+    if (hour >= 7 && hour <= 10) {
+      return "heavy";
+    }
+    // Evening rush hours (4-8 PM)
+    else if (hour >= 16 && hour <= 20) {
+      return "heavy";
+    }
+    // Normal daytime traffic
+    else if (hour > 10 && hour < 16) {
+      return "normal";
+    }
+    // Clear traffic (late night/early morning)
+    else {
+      return "clear";
+    }
+  };
 
   useEffect(() => {
     // When component mounts, try to get user location
     getUserLocation();
   }, []);
+
+  // Recalculate when route type changes
+  useEffect(() => {
+    if (userLocation) {
+      calculateRealDistance(userLocation);
+    }
+  }, [selectedRoute, userLocation]);
 
   const getUserLocation = () => {
     setLoading(true);
@@ -84,8 +133,8 @@ const SaravanaDistanceCalculator = () => {
           };
           setUserLocation(userLoc);
 
-          // Calculate mock distance and duration (in a real app, use Maps API)
-          calculateMockDistance(userLoc);
+          // Calculate distance and duration with improved algorithm
+          calculateRealDistance(userLoc);
 
           // Find nearby bus routes
           findNearbyBusRoutes();
@@ -100,9 +149,8 @@ const SaravanaDistanceCalculator = () => {
     );
   };
 
-  const calculateMockDistance = (userLoc) => {
-    // This is a mock calculation - in a real app, use Google Maps Distance Matrix API
-    // Using the Haversine formula to get crow-flies distance
+  const calculateRealDistance = (userLoc) => {
+    // Calculate crow-flies distance using Haversine formula
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(hotelCoordinates.lat - userLoc.lat);
     const dLon = deg2rad(hotelCoordinates.lng - userLoc.lng);
@@ -113,12 +161,27 @@ const SaravanaDistanceCalculator = () => {
         Math.sin(dLon/2) * Math.sin(dLon/2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = Math.round(R * c); // Distance in km
 
-    setDistance(distance);
-    // Assuming average speed of 60 km/h for simplicity
-    const timeInMinutes = Math.round(distance * 60 / 60);
-    setDuration(timeInMinutes);
+    // Direct distance calculation
+    let directDistance = Math.round(R * c);
+
+    // Apply road winding factor based on terrain and route type
+    // Roads are rarely straight line distances
+    const windingFactor = selectedRoute === 'highway' ? 1.2 : 1.4;
+
+    // Apply distance correction
+    const adjustedDistance = Math.round(directDistance * windingFactor);
+    setDistance(adjustedDistance);
+
+    // Calculate travel time based on road type and traffic conditions
+    const trafficCondition = getTrafficCondition();
+    const avgSpeed = travelSpeeds[selectedRoute][trafficCondition];
+
+    // Time calculation in minutes with additional buffer for stops, signals, etc.
+    const baseTimeMinutes = Math.round((adjustedDistance / avgSpeed) * 60);
+    const bufferTime = selectedRoute === 'highway' ? 15 : 25; // Additional time in minutes
+
+    setDuration(baseTimeMinutes + bufferTime);
   };
 
   function deg2rad(deg) {
@@ -155,7 +218,13 @@ const SaravanaDistanceCalculator = () => {
   return (
       <div className="max-w-4xl mx-auto">
         {/* Hero section */}
-
+        <div className="bg-gradient-to-r from-red-700 to-red-800 rounded-t-xl p-6 text-white">
+          <h1 className="text-2xl font-bold">{hotelName}</h1>
+          <p className="flex items-center mt-2">
+            <MapPin className="mr-2" size={18} />
+            {hotelAddress}
+          </p>
+        </div>
 
         {/* Distance calculator card */}
         <div className="bg-white rounded-b-xl shadow-lg overflow-hidden border-t-4 border-red-600">
@@ -192,6 +261,40 @@ const SaravanaDistanceCalculator = () => {
                     <p className="text-sm">{error}</p>
                   </div>
               )}
+
+              {/* Route type selection */}
+              <div className="mt-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">Select Route Type:</p>
+                <div className="flex space-x-3">
+                  <button
+                      onClick={() => setSelectedRoute('highway')}
+                      className={`px-4 py-2 rounded-md flex items-center ${
+                          selectedRoute === 'highway'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                  >
+                    <Car size={18} className="mr-2" />
+                    Highway Route
+                  </button>
+                  <button
+                      onClick={() => setSelectedRoute('local')}
+                      className={`px-4 py-2 rounded-md flex items-center ${
+                          selectedRoute === 'local'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                  >
+                    <Bus size={18} className="mr-2" />
+                    Local Roads
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {selectedRoute === 'highway'
+                      ? 'Highway routes may be longer but faster'
+                      : 'Local routes may be shorter but slower due to traffic'}
+                </p>
+              </div>
 
               {distance && duration && (
                   <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -311,6 +414,10 @@ const SaravanaDistanceCalculator = () => {
                                   <Info size={15} className="mr-1 text-gray-600" /> Frequency:
                                 </h5>
                                 <p className="text-sm text-gray-600">{route.frequency}</p>
+                                <h5 className="text-sm font-medium text-gray-700 mt-3 mb-1 flex items-center">
+                                  <Car size={15} className="mr-1 text-gray-600" /> Average Speed:
+                                </h5>
+                                <p className="text-sm text-gray-600">{route.avgSpeed} km/h</p>
                               </div>
 
                               <div className="bg-red-50 rounded-lg p-3">
@@ -340,6 +447,20 @@ const SaravanaDistanceCalculator = () => {
                 <div>
                   <h4 className="font-medium text-red-800">Special Traveler Service</h4>
                   <p className="mt-1 text-sm text-gray-700">Complimentary coffee/tea for passengers at Saravana Bhavan Restaurant from 6:00 AM to 8:00 AM. Show your bus ticket to get 10% discount at the restaurant.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Traffic information */}
+            <div className="mt-6 bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+              <div className="flex items-start">
+                <AlertCircle className="text-yellow-600 mt-1 mr-3 flex-shrink-0" />
+                <div>
+                  <h4 className="font-medium text-yellow-800">Current Traffic Information</h4>
+                  <p className="mt-1 text-sm text-gray-700">
+                    Travel times may vary based on traffic conditions.
+                    Our calculator accounts for {getTrafficCondition()} traffic at this time of day.
+                  </p>
                 </div>
               </div>
             </div>

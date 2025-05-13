@@ -217,14 +217,6 @@ const SaravanaDistanceCalculator = () => {
 
   return (
       <div className="max-w-4xl mx-auto">
-        {/* Hero section */}
-        <div className="bg-gradient-to-r from-red-700 to-red-800 rounded-t-xl p-6 text-white">
-          <h1 className="text-2xl font-bold">{hotelName}</h1>
-          <p className="flex items-center mt-2">
-            <MapPin className="mr-2" size={18} />
-            {hotelAddress}
-          </p>
-        </div>
 
         {/* Distance calculator card */}
         <div className="bg-white rounded-b-xl shadow-lg overflow-hidden border-t-4 border-red-600">

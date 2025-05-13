@@ -17,6 +17,7 @@ const MobileNavigation = () => {
     { path: '/cart', label: 'Cart', icon: '🛒', badge: totalItems },
     { path: '/contact', label: 'Contact', icon: '📞' },
     { path: '/OpenMapsToHotel', label: 'Location', icon: '📍' },
+    { path: '/bus-details', label: 'Bus Info', icon: '🚌' },
   ];
 
   return (
@@ -28,12 +29,17 @@ const MobileNavigation = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center ${
+              className={`flex flex-col items-center relative ${
                 activeTab === item.path ? 'text-red-600' : 'text-gray-600'
               }`}
             >
               <span className="text-xl">{item.icon}</span>
               <span className="text-xs mt-1">{item.label}</span>
+              {item.path === '/cart' && totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
             </Link>
           ))}
           <button
@@ -80,9 +86,9 @@ const MobileNavigation = () => {
                   >
                     <span>{item.icon}</span>
                     <span>{item.label}</span>
-                    {item.badge > 0 && item.path === '/cart' && (
+                    {item.path === '/cart' && totalItems > 0 && (
                       <span className="ml-auto bg-red-600 text-white text-xs rounded-full px-2 py-1">
-                        {item.badge}
+                        {totalItems}
                       </span>
                     )}
                   </Link>

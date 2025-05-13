@@ -10,6 +10,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
 import OpenMapsToHotel from './pages/OpenMapsToHotel';
+import BusDetails from './pages/BusDetails';
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/OpenMapsToHotel" element={<OpenMapsToHotel />} />
+            <Route path="/bus-details" element={<BusDetails />} />
           </Route>
         </Routes>
       </Router>

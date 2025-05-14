@@ -150,8 +150,8 @@ const Home = ({ setActiveTab }) => {
             <MapPin className="mr-2 text-red-600" size={24} />
             Our Location
           </h2>
-          <p className="mb-2"><span className="font-bold">Address:</span> Bus Terminal Complex, National Highway 44</p>
-          <p className="mb-4"><span className="font-bold">Landmarks:</span> Next to Central Bus Station, opposite Highway Police Station</p>
+          <p className="mb-2"><span className="font-bold">Address:</span> NH-544,Salem Main Road,Pallakkapalayam,Namakkal,Tamilnadu</p>
+          <p className="mb-4"><span className="font-bold">Landmarks:</span> Near Excel PUblic school</p>
           <div className="w-full h-64 rounded-lg overflow-hidden shadow-md">
             <iframe
               title="Google Map Location"

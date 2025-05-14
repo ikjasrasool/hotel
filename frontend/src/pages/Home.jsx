@@ -151,7 +151,7 @@ const Home = ({ setActiveTab }) => {
             Our Location
           </h2>
           <p className="mb-2"><span className="font-bold">Address:</span> NH-544,Salem Main Road,Pallakkapalayam,Namakkal,Tamilnadu</p>
-          <p className="mb-4"><span className="font-bold">Landmarks:</span> Near Excel PUblic school</p>
+          <p className="mb-4"><span className="font-bold">Landmarks:</span> Near Excel Public school</p>
           <div className="w-full h-64 rounded-lg overflow-hidden shadow-md">
             <iframe
               title="Google Map Location"
@@ -179,10 +179,6 @@ const Home = ({ setActiveTab }) => {
             <div className="flex justify-between">
               <p className="font-bold">Saturday & Sunday:</p>
               <p>6:00 AM - 12:00 AM</p>
-            </div>
-            <div className="flex justify-between">
-              <p className="font-bold">Special Hours:</p>
-              <p>24/7 for Bus Travelers</p>
             </div>
           </div>
           <div className="mt-6 p-3 bg-green-100 border-l-4 border-green-600 rounded">

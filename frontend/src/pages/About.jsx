@@ -241,11 +241,11 @@ const About = () => {
           <div className="mb-6">
             <p className="mb-2 text-gray-700 flex items-center">
               <span className="font-medium w-24">Address:</span>
-              <span>NH-44 Highway, Salem-Coimbatore Road</span>
+              <span>NH-44 Highway, Salem-Coimbatore Road,Pallakkapalayam,Tamilnadu</span>
             </p>
             <p className="mb-2 text-gray-700 flex items-center">
               <span className="font-medium w-24">Landmark:</span>
-              <span>45km from Salem, near Sankari Junction</span>
+              <span>Near Excel Public School</span>
             </p>
             <p className="mb-2 text-gray-700 flex items-center">
               <span className="font-medium w-24">GPS:</span>

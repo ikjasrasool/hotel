@@ -8,6 +8,7 @@ import AdminLayout from './layouts/AdminLayout';
 import AddItem from './pages/AddItem';
 import AdminLogin from './pages/AdminLogin';
 import AdminOrders from './pages/AdminOrders.jsx';
+import Analytics from './pages/Analytics';
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
           >
             <Route path="/admin" element={<AddItem />} />
             <Route path="/AdminOrders" element={<AdminOrders />} />
+            <Route path="/analytics" element={<Analytics />} />
           </Route>
         </Routes>
       </Router>

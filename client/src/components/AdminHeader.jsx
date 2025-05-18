@@ -97,6 +97,17 @@ const AdminHeader = () => {
                 </svg>
                 Orders
               </Link>
+              <Link
+                  to="/analytics"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-red-800 flex items-center ${
+                      isActive('/analytics') ? 'bg-red-800 shadow-inner' : ''
+                  }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Analytics
+              </Link>
 
               {/* User Profile */}
               <div className="relative ml-3">
@@ -173,6 +184,20 @@ const AdminHeader = () => {
                 </svg>
                 Orders
               </Link>
+              <Link
+                  to="/analytics"
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 flex items-center ${
+                      isActive('/analytics')
+                          ? 'bg-red-800 text-white'
+                          : 'text-white hover:bg-red-800'
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Analytics
+              </Link>
               <div className="pt-4 pb-3 border-t border-red-800">
                 <button
                     onClick={() => {
@@ -199,6 +224,7 @@ const AdminHeader = () => {
             <span className="text-white font-medium">
             {location.pathname === "/admin" && "Menu Items"}
             {location.pathname === "/AdminOrders" && "Orders"}
+            {location.pathname === "/analytics" && "Analytics"}
           </span>
           </div>
         </div>
@@ -207,3 +233,4 @@ const AdminHeader = () => {
 };
 
 export default AdminHeader;
+

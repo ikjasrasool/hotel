@@ -104,4 +104,42 @@ router.delete('/delete/:orderCode', async (req, res) => {
   }
 });
 
+// Add new endpoint for analytics
+router.get('/analytics', async (req, res) => {
+  try {
+    const { period } = req.query; // 'daily', 'weekly', 'monthly'
+    const orders = await Order.find().sort({ createdAt: 1 });
+
+    // Process orders based on requested period
+    const processedData = {
+      orderStats: [],
+      productStats: {}
+    };
+
+    orders.forEach(order => {
+      // Aggregate product statistics
+      order.items.forEach(item => {
+        if (!processedData.productStats[item.name]) {
+          processedData.productStats[item.name] = {
+            name: item.name,
+            quantity: 0,
+            revenue: 0
+          };
+        }
+        processedData.productStats[item.name].quantity += item.quantity;
+        processedData.productStats[item.name].revenue += item.price * item.quantity;
+      });
+    });
+
+    res.json({ 
+      success: true, 
+      data: processedData 
+    });
+  } catch (error) {
+    console.error('Failed to fetch analytics:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch analytics data' });
+  }
+});
+
 module.exports = router;
+

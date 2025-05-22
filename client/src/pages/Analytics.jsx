@@ -136,9 +136,9 @@ const Analytics = () => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF6B6B', '#4ECDC4', '#45B7D1'];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6 transition-all duration-300 hover:shadow-xl">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold text-gray-800">Order Analytics</h1>
             <div className="flex items-center space-x-4">
@@ -176,51 +176,51 @@ const Analytics = () => {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Orders Over Time Chart */}
-              <div className="bg-white p-4 rounded-lg border">
-                <h3 className="text-lg font-semibold mb-4">Orders Over Time</h3>
+              <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md hover:border-gray-300">
+                <div className="flex items-center mb-4 space-x-2">
+                  <TrendingUp className="w-5 h-5 text-red-600" />
+                  <h3 className="text-lg font-semibold">Orders Over Time</h3>
+                </div>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={orderData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Line
-                        type="monotone"
-                        dataKey="orders"
-                        stroke="#8884d8"
-                        name="Number of Orders"
-                      />
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
+                      <XAxis dataKey="date" stroke="#4B5563" />
+                      <YAxis stroke="#4B5563" />
+                      <Tooltip contentStyle={{ backgroundColor: 'white', borderRadius: '0.5rem', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+                      <Legend wrapperStyle={{ paddingTop: '1rem' }} />
+                      <Line type="monotone" dataKey="orders" stroke="#8884d8" strokeWidth={2} dot={{ strokeWidth: 2 }} name="Number of Orders" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
               {/* Revenue Chart */}
-              <div className="bg-white p-4 rounded-lg border">
-                <h3 className="text-lg font-semibold mb-4">Revenue Analysis</h3>
+              <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md hover:border-gray-300">
+                <div className="flex items-center mb-4 space-x-2">
+                  <BarChart2 className="w-5 h-5 text-green-600" />
+                  <h3 className="text-lg font-semibold">Revenue Analysis</h3>
+                </div>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={orderData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar
-                        dataKey="revenue"
-                        fill="#82ca9d"
-                        name="Revenue (₹)"
-                      />
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
+                      <XAxis dataKey="date" stroke="#4B5563" />
+                      <YAxis stroke="#4B5563" />
+                      <Tooltip contentStyle={{ backgroundColor: 'white', borderRadius: '0.5rem', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+                      <Legend wrapperStyle={{ paddingTop: '1rem' }} />
+                      <Bar dataKey="revenue" fill="#82ca9d" name="Revenue (₹)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
               {/* Popular Products Chart */}
-              <div className="bg-white p-4 rounded-lg border lg:col-span-2">
-                <h3 className="text-lg font-semibold mb-4">Top Products by Orders</h3>
+              <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md hover:border-gray-300 lg:col-span-2">
+                <div className="flex items-center mb-4 space-x-2">
+                  <Package className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-lg font-semibold">Top Products by Orders</h3>
+                </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">

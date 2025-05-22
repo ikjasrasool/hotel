@@ -11,6 +11,7 @@ const Menu = () => {
   const { addToCart, cartItems } = useCart();
   const [selectedItem, setSelectedItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [quantities, setQuantities] = useState({});
 
   useEffect(() => {
     fetchFoodItems();
@@ -80,8 +81,32 @@ const Menu = () => {
     setShowModal(false);
   };
 
+  const getItemQuantity = (itemId) => {
+    return quantities[itemId] || 1;
+  };
+
+  const handleQuantityChange = (itemId, delta) => {
+    setQuantities(prev => ({
+      ...prev,
+      [itemId]: Math.max(1, Math.min(10, (prev[itemId] || 1) + delta))
+    }));
+  };
+
+  // Update addToCart to include quantity
+  const handleAddToCart = (item) => {
+    const quantity = getItemQuantity(item._id || item.id);
+    addToCart({ ...item, quantity });
+    // Reset quantity after adding to cart
+    setQuantities(prev => ({ ...prev, [item._id || item.id]: 1 }));
+    closeModal();
+  };
+
   const FoodDetailModal = ({ item, onClose }) => {
     if (!item) return null;
+    const itemId = item._id || item.id;
+    const quantity = getItemQuantity(itemId);
+    const totalPrice = item.price * quantity;
+    const stockLevel = item.quantity <= 5 ? 'low' : item.quantity <= 10 ? 'medium' : 'high';
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -112,9 +137,23 @@ const Menu = () => {
             </div>
 
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-2xl font-bold text-red-600">₹{item.price}</span>
-                <span className="text-gray-600">Prep Time: {item.preparationTime} min</span>
+              <div className="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center gap-4">
+                  <div className="flex flex-col">
+                    
+                    <div className={`text-sm mt-1 ${
+                      stockLevel === 'low' ? 'text-red-600' :
+                      stockLevel === 'medium' ? 'text-yellow-600' :
+                      'text-green-600'
+                    }`}>
+                      {item.quantity} items left in stock
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm text-gray-600">Total Amount</div>
+                  <div className="text-xl font-bold text-red-600">₹{totalPrice}</div>
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -188,18 +227,17 @@ const Menu = () => {
 
             <div className="mt-6 flex justify-end">
               <button
-                onClick={() => {
-                  addToCart(item);
-                  onClose();
-                }}
+                onClick={() => handleAddToCart(item)}
                 className={`px-6 py-2 rounded text-sm font-medium transition ${
-                  isItemInCart(item._id || item.id)
+                  isItemInCart(itemId)
                     ? 'bg-gray-300 text-gray-700'
                     : 'bg-red-600 text-white hover:bg-red-700'
                 }`}
-                disabled={isItemInCart(item._id || item.id)}
+                disabled={isItemInCart(itemId)}
               >
-                {isItemInCart(item._id || item.id) ? 'Already in Cart' : 'Add to Cart'}
+                {isItemInCart(itemId) 
+                  ? 'Already in Cart' 
+                  : `Add ${quantity} to Cart - ₹${totalPrice}`}
               </button>
             </div>
           </div>
@@ -248,22 +286,29 @@ const Menu = () => {
         </div>
 
         <div className="flex justify-between items-center mt-auto">
-          <button
-            onClick={() => openModal(item)}
-            className="text-red-600 hover:text-red-700 text-sm font-medium"
-          >
-            View Details
-          </button>
+          <div className="flex flex-col">
+            <button
+              onClick={() => openModal(item)}
+              className="text-red-600 hover:text-red-700 text-sm font-medium"
+            >
+              View Details
+            </button>
+            <span className="text-sm text-gray-600">{item.quantity} left</span>
+          </div>
           <button
             onClick={() => addToCart(item)}
             className={`px-4 py-2 rounded text-sm font-medium transition ${
-              isItemInCart(item._id || item.id)
+              isItemInCart(item._id || item.id) || item.quantity === 0
                 ? 'bg-gray-300 text-gray-700'
                 : 'bg-red-600 text-white hover:bg-red-700'
             }`}
-            disabled={isItemInCart(item._id || item.id)}
+            disabled={isItemInCart(item._id || item.id) || item.quantity === 0}
           >
-            {isItemInCart(item._id || item.id) ? 'Ordered' : 'Order'}
+            {isItemInCart(item._id || item.id) 
+              ? 'Ordered' 
+              : item.quantity === 0 
+                ? 'Out of Stock' 
+                : 'Order'}
           </button>
         </div>
       </div>

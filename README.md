@@ -164,13 +164,3 @@ It’s built to enhance convenience for travelers and improve efficiency for res
 
 ```
 
----
-
-Let me know if you want:
-
-- Screenshots section
-- API routes & sample response docs
-- Deployment workflow badges (Vercel, Render, GitHub Actions)
-
-I'm happy to add those for you!
-```

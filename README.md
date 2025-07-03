@@ -1,85 +1,122 @@
 
 # 🚌 Saravana Bhavan Express – Highway Food Pre-Ordering System
 
-Welcome to **Saravana Bhavan Express**, a web application built to ease the food ordering experience for **bus passengers on highways**. This system allows users to **pre-order meals** from nearby restaurants, ensuring **quick and fresh food pickup** during short bus halts.
+**Saravana Bhavan Express** is a mobile-first web application built for **bus passengers traveling on highways** to pre-order food from roadside restaurants before the bus reaches the stop.  
+It features **two separate interfaces**:
+- **User Frontend** – for travelers to browse menu and place orders
+- **Admin Client** – for restaurant staff to manage orders
+
+This ensures **quick service**, reduces wait time, and improves restaurant efficiency.
+
+---
 
 ## ✨ Key Features
 
-- 🚍 **Bus Route Integration** – Lists available buses and their stops for better accuracy.
-- 📍 **Live Location Tracking** – Uses the Geolocation API to show the distance from the restaurant for timely ordering.
-- 🧑‍🍳 **No-Login Ordering** – Allows guests to place orders without mandatory registration.
-- 💳 **Razorpay Integration** – Provides secure online payment options.
-- 📧 **Email Confirmation** – Sends order details to users via EmailJS.
-- 📊 **Admin Dashboard** – View, update, and manage live orders with analytics.
-- 🛠️ **Instant Updates** – Admin can mark orders as delivered and update the menu dynamically.
+### 🚀 For Users (Frontend)
+- 🧾 Browse food menu in real-time
+- 🚍 Track bus and stop locations
+- 📍 Live location tracking using Geolocation API
+- ⚡ Instant ordering – No login required
+- 💳 Online payment via Razorpay
+- 📧 Email confirmation after successful order
+
+### 🛠️ For Admin (Client)
+- 📦 Manage incoming orders live
+- ✅ Mark orders as delivered
+- ✍️ Update menu dynamically
+- 📊 View analytics on orders & revenue
+
+---
+
+## 🧑‍💻 Live Deployments
+
+| Interface | Purpose           | Hosted Link                                      |
+|-----------|-------------------|--------------------------------------------------|
+| 🚀 User    | Mobile food ordering | [hotel-1-f248.onrender.com](https://hotel-1-f248.onrender.com) |
+| 🛠️ Admin   | Order management     | [hotel-2-zkuz.onrender.com](https://hotel-2-zkuz.onrender.com) |
+
+---
+
+## 📱 Mobile-First Design
+
+Both user and admin interfaces are fully **responsive** and optimized for **mobile devices**, ensuring a smooth experience even on low-bandwidth rural highways.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer       | Technology                                 |
-|-------------|---------------------------------------------|
-| Frontend    | React.js, Tailwind CSS, Bootstrap 5         |
-| Backend     | Node.js, Express.js                         |
-| Database    | MongoDB Atlas                               |
-| Payments    | Razorpay API                                |
-| Email       | EmailJS                                     |
-| Location    | Browser Geolocation API                     |
-| Hosting     | Vercel (Frontend), Render (Backend)         |
-| Versioning  | Git + GitHub                                |
+| Layer       | Technology                             |
+|-------------|-----------------------------------------|
+| Frontend    | React.js, Tailwind CSS, Bootstrap 5     |
+| Admin Client| React.js (client folder)                |
+| Backend     | Node.js, Express.js                     |
+| Database    | MongoDB Atlas                           |
+| Payments    | Razorpay API                            |
+| Email       | EmailJS                                 |
+| Location    | Geolocation API (browser-based)         |
+| Hosting     | Render                                  |
+| Versioning  | Git + GitHub                            |
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started (Local Setup)
 
-### 1. Clone the Repository
+### 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/ikjasrasool/hotel.git
 cd hotel
 ````
 
-### 2. Install Dependencies
+### 2️⃣ Install Dependencies
 
 ```bash
-npm install                # For root (if using workspaces)
-cd frontend && npm install
-cd ../backend && npm install
+# Install root packages (if needed)
+npm install
+
+# User frontend
+cd frontend
+npm install
+
+# Admin client
+cd ../client
+npm install
+
+# Backend
+cd ../Backend
+npm install
 ```
 
-### 3. Configure Environment Variables
+### 3️⃣ Set Up Environment Variables
 
-Create a `.env` file in `/backend`:
+Create a `.env` file inside `/Backend` with the following:
 
 ```env
 MONGODB_URI=your_mongodb_atlas_uri
 RAZORPAY_KEY_ID=your_razorpay_key
 RAZORPAY_KEY_SECRET=your_razorpay_secret
-EMAILJS_CONFIG=your_emailjs_credentials
+EMAILJS_CONFIG=your_emailjs_config
 ```
 
-### 4. Run the App
+### 4️⃣ Run Locally
 
 ```bash
-# Frontend
+# Frontend (User Interface)
 cd frontend
 npm start
 
+# Admin Client
+cd ../client
+npm start
+
 # Backend
-cd ../backend
+cd ../Backend
 npm start
 ```
 
 ---
 
-## 🔗 Live Deployment
-
-* **Frontend**: [hotel-chi-vert.vercel.app](https://hotel-chi-vert.vercel.app)
-* **Backend**: Hosted on Render (API details in code)
-
----
-
-## 🤝 Contributors
+## 🧑‍🤝‍🧑 Contributors
 
 * 👨‍💻 [Ikjas Rasool](https://github.com/ikjasrasool)
 * 👨‍💻 [Kamaleshwaran A](https://github.com/kamaleshwaran-A)
@@ -89,28 +126,51 @@ npm start
 
 ## 📜 License
 
-This project is licensed under the MIT License - feel free to use and modify!
+This project is licensed under the **MIT License**.
+Feel free to fork, use, or improve it as needed!
 
 ---
 
-## 💡 Contribution
+## 💡 Contribution Guidelines
 
-We welcome contributions to improve the platform!
-To contribute:
+Want to contribute?
 
-1. Fork this repo
-2. Create a new branch: `git checkout -b feature-name`
-3. Commit your changes: `git commit -m 'Add new feature'`
-4. Push to the branch: `git push origin feature-name`
-5. Submit a pull request 🚀
+1. Fork the repository
+2. Create a new branch
+
+   ```bash
+   git checkout -b feature-name
+   ```
+3. Commit your changes
+
+   ```bash
+   git commit -m "Added a new feature"
+   ```
+4. Push to GitHub
+
+   ```bash
+   git push origin feature-name
+   ```
+5. Submit a Pull Request 🚀
 
 ---
 
-> "Fresh food, faster stops – Saravana Bhavan Express transforms highway dining for travelers."
+## ✅ Purpose
+
+This project solves the issue of **long wait times** at highway restaurants by enabling **bus passengers** to pre-order food that’s ready on arrival.
+It’s built to enhance convenience for travelers and improve efficiency for restaurant owners.
+
+> 🚀 *"Fresh food, faster stops – Saravana Bhavan Express transforms highway dining for travelers."*
 
 ```
 
 ---
 
-You can copy-paste the above content into your `README.md` file. If you want help customizing it further (screenshots, badges, API routes, etc.), feel free to ask!
+Let me know if you want:
+
+- Screenshots section
+- API routes & sample response docs
+- Deployment workflow badges (Vercel, Render, GitHub Actions)
+
+I'm happy to add those for you!
 ```
